@@ -1,0 +1,33 @@
+module.exports={
+	appId: 'wx14b3135d0f6f5212',
+	secret: 'cff307b6a1a5d4156ed62129ad9c73b7',
+	// mongo:{
+ //     dbIp:'117.78.45.173',
+ //     dbPort: 27017,
+ //     dbName: 'admin',
+ //     dbUserName: 'admin',
+ //     dbPassword: 'admin'
+	// },
+	mongo:{
+     dbIp:'114.115.206.125',
+     dbPort: 27017,
+     dbName: 'admin',
+     dbUserName: 'admin',
+     dbPassword: 'admin'
+	},
+	redis:{
+      redisIp: "117.78.45.173",
+	  redisPort: 6378,
+	  redisPwd: 'beijixiong',
+	},
+	pay:{
+	  //商户号	
+	  mch_id: '1518701051',
+	  pay_key: 'aOQDxyJpYedNluHGUHknXLmnsnQLoufc',
+	  notify_url: 'http://www.beijixiong.club'
+	},
+	imgUrl: 'http://127.0.0.1:18080/fileDownload?fileId='
+}
+// 支付博客
+//https://blog.csdn.net/zhuming3834/article/details/73168056
+//https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1
