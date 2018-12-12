@@ -26,7 +26,7 @@ module.exports={
 	  pay_key: 'aOQDxyJpYedNluHGUHknXLmnsnQLoufc',
 	  notify_url: 'http://www.beijixiong.club'
 	},
-	imgUrl: 'http://127.0.0.1:18080/fileDownload?fileId='
+	imgUrl: 'https://www.beijixiong.club/fileDownload?fileId='
 }
 // 支付博客
 //https://blog.csdn.net/zhuming3834/article/details/73168056
