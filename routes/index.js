@@ -7,6 +7,7 @@ var adminHandle = require('./adminHandle')
 var fs = require('fs')
 var uploadHandler = require('./uploadHandler')
 var downloadHandle = require('./downloadHandle')
+var payHandle = require('./payHandle')
 var _APP_SESSION_PREFIX = 'appsession.'
 exports.routeAction = async (ctx) => {
      var action = parseActionData(ctx.request,ctx);
@@ -173,6 +174,33 @@ exports.adminAction = async (ctx) =>{
 
 
 exports.payAction = async (ctx) => {
-  console.log(ctx.request.payBody)
-  console.log('支付返回---')
+  var payObj = parsePayData(ctx)
+  if (payObj.result_code === 'SUCCESS') {
+     var payResult = await payHandle.handleAction(payObj)
+     if (!payResult.err) {
+       ctx.response.type('application/xml')
+       ctx.response.body = `<xml>
+       <return_code><![CDATA[SUCCESS]]></return_code>
+       <return_msg><![CDATA[OK]]></return_msg>
+       </xml>`
+     } else {
+       console.log('内部订单错误：'+ err )
+     }
+  } 
+}
+
+
+function parsePayData(ctx) {
+  var req = ctx.request;
+  var payObj = {};
+  try {
+    var query = req.payBody.xml;
+    payObj.result_code = query.result_code;
+    payObj.sign = query.payObj;
+    payObj.out_trade_no = payObj.out_trade_no;
+    payObj.openid = query.openid;
+  } catch (e) {
+    payObj.err = e;
+  }
+  return payObj;
 }
