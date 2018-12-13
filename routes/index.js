@@ -180,7 +180,7 @@ exports.payAction = async (ctx) => {
   if (payObj.result_code === 'SUCCESS') {
      var payResult = await payHandle.handleAction(payObj)
      if (!payResult.err) {
-       ctx.response.type('application/xml')
+       ctx.response.type = 'application/xml'
        ctx.response.body = `<xml>
        <return_code><![CDATA[SUCCESS]]></return_code>
        <return_msg><![CDATA[OK]]></return_msg>
