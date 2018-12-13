@@ -17,7 +17,8 @@ require('./until/mongo').connectDb()
 
 app.use(koaBody({multipart: true}))
 
-app.use(xmlParser())
+app.use(xmlParser({key: 'payBody'}))
+
 app.use(koaRoute.get('/action', routes.routeAction))
 
 app.use(koaRoute.post('/action', routes.routeAction))
