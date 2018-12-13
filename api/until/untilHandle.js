@@ -16,7 +16,6 @@ exports.pay = async function(action, session, callback){
            orderObj.out_trade_no = payObj.out_trade_no
            orderObj.address = action.address
            orderObj.userId = action.openId
-           orderObj.paySign = payObj.paySign
            let order = await exports.produceOrder(orderObj)
            if (!order.err) {
              callback({success:true,data:payObj})

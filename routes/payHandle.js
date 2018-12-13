@@ -4,13 +4,11 @@ const fields = require(__baseDir+'/api/common/fields')
 exports.handleAction = function(payObj) {
   return new Promise((resolve, reject)=>{
     var query = {}
-    console.log(payObj)
-    console.log('--------')
     query.out_trade_no = payObj.out_trade_no;
     mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).findOne(query,function(err, data){
       if (!err) {
         if (data) {
-          mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).update(query,{$set: {payState: true}},function(err){
+          mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).update(query,{$set: {payState: true, time_end: payObj.time_end}},function(err){
           	if (!err) {
           		resolve({success: true})
           	} else {

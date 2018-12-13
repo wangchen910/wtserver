@@ -175,8 +175,6 @@ exports.adminAction = async (ctx) =>{
 
 exports.payAction = async (ctx) => {
   var payObj = parsePayData(ctx)
-  console.log(payObj)
-  console.log('payObj-------')
   if (payObj.result_code === 'SUCCESS') {
      var payResult = await payHandle.handleAction(payObj)
      if (!payResult.err) {
@@ -201,6 +199,7 @@ function parsePayData(ctx) {
     payObj.sign = query.sign[0];
     payObj.out_trade_no = query.out_trade_no[0];
     payObj.openid = query.openid[0];
+    payObj.time_end = query.time_end[0];
   } catch (e) {
     payObj.err = e;
   }
