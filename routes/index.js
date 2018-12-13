@@ -173,6 +173,6 @@ exports.adminAction = async (ctx) =>{
 
 
 exports.payAction = async (ctx) => {
-  console.log(ctx.request.body)
+  console.log(ctx.request)
   console.log('支付返回---')
 }
