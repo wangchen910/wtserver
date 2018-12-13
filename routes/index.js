@@ -197,12 +197,10 @@ function parsePayData(ctx) {
   var payObj = {};
   try {
     var query = req.payBody.xml;
-    console.log(query)
-    console.log('query--------')
-    payObj.result_code = query.result_code;
-    payObj.sign = query.payObj;
-    payObj.out_trade_no = payObj.out_trade_no;
-    payObj.openid = query.openid;
+    payObj.result_code = query.result_code[0];
+    payObj.sign = query.sign[0];
+    payObj.out_trade_no = query.out_trade_no[0];
+    payObj.openid = query.openid[0];
   } catch (e) {
     payObj.err = e;
   }
