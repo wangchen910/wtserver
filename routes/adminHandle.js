@@ -1,10 +1,13 @@
 var adminHandle = require(__baseDir+'/api/app/admin/adminHandle')
-
+var adminOrderHandle = require(__baseDir+'/api/app/admin/adminOrderHandle')
 var actions = {
    commodity: {
      getCommodityList: adminHandle.getCommodityList,
      addCommodity: adminHandle.addCommodity,
      removeCommodity: adminHandle.removeCommodity
+   },
+   order: {
+     getOrderList: adminOrderHandle.getOrderList
    }
 }
 

@@ -26,6 +26,7 @@ app.use(koaRoute.get('/fileDownload', routes.downloadFile))
 // app.use(routes.routeAction)
 app.use(koaRoute.post('/adminAction', routes.adminAction))
 
+app.use(koaRoute.post('/payAction', routes.payAction))
 app.listen(port);
 
 
