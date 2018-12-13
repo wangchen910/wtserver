@@ -2,7 +2,7 @@ const mongo = require(__baseDir+'/until/mongo')
 const fields = require(__baseDir+'/api/common/fields')
 
 exports.handleAction = function(payObj) {
-  return new Promise((rsolve, reject)=>{
+  return new Promise((resolve, reject)=>{
     var query = {}
     console.log(payObj)
     console.log('--------')
