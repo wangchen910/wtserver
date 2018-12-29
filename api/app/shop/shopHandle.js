@@ -19,8 +19,20 @@ exports.getCommodity = async function(action, session, callback) {
        if (!err) {
          callback({success:true, data: data})
        } else {
-         console.log('adminError: getCommodity:'+ err)
+         console.log('appError: getCommodity:'+ err)
          callback({success: false, err: err})
        }
-    })  
+    })
+}
+
+exports.getCommodityList = async function(action, session, callback){
+    var query = {}
+	 mongo.db(fields.DEFAULT_DB).collection(fields.COMMODITY).find(query).toArray(function(err,data){
+       if (!err) {
+         callback({success:true, data: data})
+       } else {
+         console.log('appError: getCommodityList:'+ err)
+         callback({success: false, err: err})
+       }
+    })
 }

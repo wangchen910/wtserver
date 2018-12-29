@@ -15,7 +15,8 @@ var actions = {
        getAddress: userHandle.getAddress
      },
      commodity: {
-       getCommodity: shopHandle.getCommodity
+       getCommodity: shopHandle.getCommodity,
+       getCommodityList: shopHandle.getCommodityList
      }
    }
 }
