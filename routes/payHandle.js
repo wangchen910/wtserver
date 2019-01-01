@@ -12,16 +12,16 @@ exports.handleAction = function(payObj) {
           	if (!err) {
           		resolve({success: true})
           	} else {
-          		console.log('payActionErr: 修改订单状态错误！')
+          		console.log('payActionErr: 修改订单状态错误！订单号：'+ payObj.out_trade_no)
           		resolve({err:err})
           	}
           })
         } else {
-          resolve({err: 'payActionErr: 没有生成订单'})	
-          console.log('payActionErr: 没有生成订单')
+          resolve({err: 'payActionErr: 没有生成订单 订单号：' + payObj.out_trade_no})	
+          console.log('payActionErr: 没有生成订单 订单号：'+ payObj.out_trade_no)
         }
       } else {
-        console.log('payActionErr:'+err)
+        console.log('payActionErr: mongoerr 订单号：'+ payObj.out_trade_no)
         resolve({err:err})
       }
     })

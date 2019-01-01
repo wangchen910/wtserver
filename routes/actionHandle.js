@@ -16,7 +16,8 @@ var actions = {
      },
      commodity: {
        getCommodity: shopHandle.getCommodity,
-       getCommodityList: shopHandle.getCommodityList
+       getCommodityList: shopHandle.getCommodityList,
+       getOrderList: shopHandle.getOrderList
      }
    }
 }

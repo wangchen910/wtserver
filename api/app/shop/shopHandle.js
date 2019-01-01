@@ -29,7 +29,7 @@ exports.getCommodity = async function(action, session, callback) {
 }
 
 exports.getCommodityList = async function(action, session, callback){
-    var query = {}
+   var query = {}
 	 mongo.db(fields.DEFAULT_DB).collection(fields.COMMODITY).find(query).toArray(function(err,data){
        if (!err) {
          callback({success:true, data: data})
@@ -38,4 +38,41 @@ exports.getCommodityList = async function(action, session, callback){
          callback({success: false, err: err})
        }
     })
+}
+
+exports.getOrderList = async function(action, session, callback){
+   var query = {}
+   query.userId = session.openId;
+   // mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).find(query).limit(action.limit).skip(action.skip).toArray(function(err,data){
+   //   if (!err) {
+   //     callback({success:true, data:data})
+   //   } else {
+   //     console.log('getOrderList: getOrderList:'+ err)
+   //     callback({success: false, err: err})
+   //   }
+   // })
+  mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).aggregate([{
+    $lookup:{
+      from: 'commodity',
+      localField: 'commodityId',
+      foreignField: 'id',
+      as: 'list_doc'
+   }},{
+    $match: query
+   },{
+    $sort: {
+      out_trade_no: -1
+    }
+   },{
+    $skip: action.skip
+   },{
+    $limit: action.limit
+   }]).toArray(function(err,data){
+     if (!err) {
+       callback({success: true, data:data})
+     } else {
+       console.log('getOrderList: getOrderList:'+ err)
+       callback({success: false, err: err})
+     }
+   })
 }
