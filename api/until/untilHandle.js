@@ -1,6 +1,8 @@
 const pay = require(__baseDir+'/until/pay')
 const mongo = require(__baseDir+'/until/mongo')
 const fields = require(__baseDir+'/api/common/fields')
+const url = require('url')
+const node_request = require('request')
 exports.pay = async function(action, session, callback){
     if (!action.ip || !action.fee || !action.body || !action.address || !action.commodityId){
     	return callback({success: true, message:'缺少参数'})
@@ -43,5 +45,24 @@ exports.produceOrder = async function(obj) {
        }
      })
    }) 
+}
+
+exports.removeImage = async function(action) {
+  return new Promise((resolve, reject) => {
+    let parse = url.parse(action.url)
+    let md5 = parse.path.replace(/\//,'');
+    var imgUrl = 'http://'+parse.host + '/admin?md5='+md5+'&t=1'
+  node_request
+  .get(imgUrl)
+  .on('response', function(response) {
+    console.log(response.statusCode) // 200
+    console.log('imageDeleteSuccess: '+ md5)
+    if (response.statusCode === 200) {
+      resolve({success: true, message: 'delSuccess'})
+    } else {
+      resolve({success: false, message: response.statusCode})
+    }
+  })
+  })
 }
 

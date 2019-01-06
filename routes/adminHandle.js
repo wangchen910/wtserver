@@ -4,7 +4,8 @@ var actions = {
    commodity: {
      getCommodityList: adminHandle.getCommodityList,
      addCommodity: adminHandle.addCommodity,
-     removeCommodity: adminHandle.removeCommodity
+     removeCommodity: adminHandle.removeCommodity,
+     removeImage: adminHandle.removeImage
    },
    order: {
      getOrderList: adminOrderHandle.getOrderList

@@ -2,6 +2,8 @@ const mongo = require(__baseDir+'/until/mongo')
 const fields = require(__baseDir+'/api/common/fields')
 const uuidv4 = require('uuid/v4');
 const url = require('url')
+const node_request = require('request')
+const until = require(__baseDir+'/api/until/untilHandle')
 exports.getCommodityList = async function(action, session, callback){
     let query = {}
     mongo.db(fields.DEFAULT_DB).collection(fields.COMMODITY).find(query).count(function(err, count){
@@ -50,15 +52,18 @@ exports.addCommodity = async function(action, session, callback) {
 exports.removeCommodity = async function(action, session, callback) {
    let query = {};
    query.id = action.id;
-   let fileId = url.parse(action.imgUrl, true).query.fileId;
+   // let fileId = url.parse(action.imgUrl, true).query.fileId;
    mongo.db(fields.DEFAULT_DB).collection(fields.COMMODITY).remove(query, function(err){
      if (!err) {
-       mongo.removeFileFromDb(fileId, function(err) {
-          if (!err) {
-            callback({success:true, message:'remove commodity success!'})
-          } else {
-            callback({success: false, err: err})
-          }
+       // mongo.removeFileFromDb(fileId, function(err) {
+       //    if (!err) {
+       //      callback({success:true, message:'remove commodity success!'})
+       //    } else {
+       //      callback({success: false, err: err})
+       //    }
+       // })
+       until.removeImage({url: action.imgUrl}).then((obj) => {
+         callback(obj)
        })
      } else {
       console.log('adminError: removeCommodity:'+ err)
@@ -66,3 +71,10 @@ exports.removeCommodity = async function(action, session, callback) {
      }
    })
 }
+
+exports.removeImage = async function(action, session, callback) {
+  until.removeImage(action).then((obj) => {
+    callback(obj)
+  })
+}
+
