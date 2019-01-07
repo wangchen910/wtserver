@@ -46,23 +46,29 @@ exports.produceOrder = async function(obj) {
      })
    }) 
 }
-
+/*
+* 删除图片
+* 参数
+* 参数类型 Object
+* {url: 图片地址}
+*
+* */
 exports.removeImage = async function(action) {
   return new Promise((resolve, reject) => {
     let parse = url.parse(action.url)
     let md5 = parse.path.replace(/\//,'');
     var imgUrl = 'http://'+parse.host + '/admin?md5='+md5+'&t=1'
-  node_request
-  .get(imgUrl)
-  .on('response', function(response) {
-    console.log(response.statusCode) // 200
-    console.log('imageDeleteSuccess: '+ md5)
-    if (response.statusCode === 200) {
-      resolve({success: true, message: 'delSuccess'})
-    } else {
-      resolve({success: false, message: response.statusCode})
-    }
-  })
+    node_request
+    .get(imgUrl)
+    .on('response', function(response) {
+      console.log(response.statusCode) // 200
+      console.log('imageDeleteSuccess: '+ md5)
+      if (response.statusCode === 200) {
+        resolve({success: true, message: 'delSuccess'})
+      } else {
+        resolve({success: false, message: response.statusCode})
+      }
+    })
   })
 }
 
