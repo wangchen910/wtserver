@@ -1,6 +1,6 @@
 var adminHandle = require(__baseDir+'/api/app/admin/adminHandle')
 var adminOrderHandle = require(__baseDir+'/api/app/admin/adminOrderHandle')
-var adminActivityHandle = require(__baseDir+'api/app/admin/adminActivityHandle')
+var adminActivityHandle = require(__baseDir+'/api/app/admin/adminActivityHandle')
 var actions = {
    commodity: {
      getCommodityList: adminHandle.getCommodityList,
@@ -11,7 +11,10 @@ var actions = {
    order: {
      getOrderList: adminOrderHandle.getOrderList
    },
-   activity: adminActivityHandle.getActivityList
+   activity: {
+     getActivityList: adminActivityHandle.getActivityList,
+     addActivity: adminActivityHandle.addActivity
+   }
 }
 
 
