@@ -2,6 +2,7 @@ var path = require('path')
 var rediscli = require(path.join(__baseDir+'/until/redis')).connect
 var _APP_SESSION_PREFIX = 'appsession.'
 var _ADMIN_SESSION_PREFIX = 'adminsession.'
+var _MC_SESSION_PREFIX = 'mcsession.'
 var _SESSION_TIMEOUT_SECONDS = 480 * 60;
 var config = require(path.join(__baseDir + '/serverConfig.js'))
 var request = require(path.join(__baseDir + '/until/request'))
@@ -78,6 +79,9 @@ function _key(id) {
 function _adminkey(id) {
     return _ADMIN_SESSION_PREFIX+id;
 }
+function _mckey(id) {
+   return _MC_SESSION_PREFIX+id;
+}
 
 exports.checkToken = function(upload) {
    return new Promise((resolve, reject)=>{
@@ -101,6 +105,40 @@ exports.adminLogin = function(action){
   return new Promise((resolve,reject)=>{
     if (action.user === 'wangtao'&&action.pass ==='wangtao'){
       rediscli.getClient().set(_adminkey(key), JSON.stringify(value), function(err,res){
+        if(!err){
+          resolve({success:true,sessionId:key})  
+        }else{
+          resolve({err:err})
+        }
+      })
+    }else {
+      resolve({err:'pass or user error'})
+    }
+  })
+}
+
+
+
+exports.checkMcSession = function(id){
+   return new Promise(function(resolve, reject){
+     exports.get(_mckey(id),function(err,res){
+        if(err){
+            resolve({err:err});
+        }else{
+            rediscli.getClient().expire(_mckey(id),_SESSION_TIMEOUT_SECONDS);
+            res = JSON.parse(res)
+            resolve(res);
+        }
+    });
+   })
+}
+
+exports.mcLogin = function(action){
+  var key = uuidv1()
+  var value = action;
+  return new Promise((resolve,reject)=>{
+    if (action.user === 'wangtao'&&action.pass ==='wangtao'){
+      rediscli.getClient().set(_mckey(key), JSON.stringify(value), function(err,res){
         if(!err){
           resolve({success:true,sessionId:key})  
         }else{

@@ -31,4 +31,8 @@ app.use(koaRoute.post('/adminAction', routes.adminAction))
 
 app.use(koaRoute.post('/payAction', routes.payAction))
 
+app.use(koaRoute.post('/until', routes.untilAction))
+// 商家逻辑
+app.use(koaRoute.post('/mcAction', routes.mcAction))
+
 app.listen(port);

@@ -1,7 +1,7 @@
 var shopHandle = require(__baseDir+'/api/app/shop/shopHandle')
 var untilHandle = require(__baseDir+'/api/until/untilHandle')
 var userHandle = require(__baseDir+'/api/app/user/userHandle')
-
+var activityHandle = require(__baseDir+'/api/app/activity/activityHandle')
 var actions = {
    app:{
      shop: {
@@ -12,12 +12,18 @@ var actions = {
      },
      user: {
        addAddress: userHandle.addAddress,
-       getAddress: userHandle.getAddress
+       getAddress: userHandle.getAddress,
+       setUserInfo: userHandle.setUserInfo,
+       confirmUser: userHandle.confirmUser
      },
      commodity: {
        getCommodity: shopHandle.getCommodity,
        getCommodityList: shopHandle.getCommodityList,
        getOrderList: shopHandle.getOrderList
+     },
+     activity: {
+       getActivityInfo: activityHandle.getActivityInfo,
+       partakeActivity: activityHandle.partakeActivity
      }
    }
 }

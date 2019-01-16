@@ -6,8 +6,10 @@ var actionHandle = require('./actionHandle')
 var adminHandle = require('./adminHandle')
 var fs = require('fs')
 var uploadHandler = require('./uploadHandler')
+var untilHandle = require('./untilHandle')
 var downloadHandle = require('./downloadHandle')
 var payHandle = require('./payHandle')
+var mcHandle = require('./mcHandle')
 var _APP_SESSION_PREFIX = 'appsession.'
 exports.routeAction = async (ctx) => {
      var action = parseActionData(ctx.request,ctx);
@@ -32,6 +34,10 @@ exports.routeAction = async (ctx) => {
            var callback = await appsession.login(action)
            ctx.response.status = 200
            ctx.response.body = callback
+        } else if (action.name === 'until') {
+           var callback = await untilHandle.handleAction(action)
+           ctx.response.status = 200
+           ctx.response.body = callback;
         } else {
            ctx.response.body = {success: false, message: 'sessionId not fond! action name is not fond'}
         }
@@ -51,6 +57,7 @@ function parseActionData(req,ctx) {
             action.data = query.data
             action.data.ip = ctx.req.headers['x-forwarded-for'] || ctx.req.connection.remoteAddress ||ctx.req.socket.remoteAddress ||ctx.req.connection.socket.remoteAddress;
             if(typeof query.data === 'string') {
+              console.log(query.data)
               action.data = JSON.parse(query.data);
             }
             action.sessionId = query.sessionId;
@@ -205,3 +212,67 @@ function parsePayData(ctx) {
   }
   return payObj;
 }
+
+
+exports.untilAction = async (ctx) => {
+     var action = parseActionData(ctx.request,ctx);
+     if (action.err){
+        ctx.response.body = action;
+     } else {
+        if (action.sessionId){ 
+            var sessionData = await appsession.checkSession(action.sessionId);
+            if (!sessionData.err){
+                var result = await actionHandle.handleAction(action, sessionData)
+                if(result.err){
+                    ctx.response.body = {success: false,message:result.err}
+                }else{
+                    ctx.response.body = result
+                }
+            }else if(sessionData.err && sessionData.err.sessionExpire){
+               ctx.response.body = {success:false,sessionExpire:true,message:'session sessionExpire'}
+            }else{
+               ctx.response.body = {success: false,message:sessionData.err} 
+            }
+        } else if (action.name === 'login') {
+           var callback = await appsession.login(action)
+           ctx.response.status = 200
+           ctx.response.body = callback
+        } else if (action.name === 'until') {
+           var callback = await appsession.login(action)
+           ctx.response.status = 200
+           ctx.response.body = callback
+        } else {
+           ctx.response.body = {success: false, message: 'sessionId not fond! action name is not fond'}
+        }
+     }
+}
+
+exports.mcAction = async(ctx) => {
+  var action = parseActionData(ctx.request, ctx);
+   console.log(new Date() + ' mc请求参数:',action)
+   if (action.err){
+     ctx.response.body = action;
+   } else {
+     if (action.sessionId){
+        var sessionData = await appsession.checkMcSession(action.sessionId);
+        if (!sessionData.err){
+          var result = await mcHandle.handleAction(action, sessionData)
+          if(result.err){
+            ctx.response.body = {success: false,message:result.err}
+          }else{
+            ctx.response.body = result
+          }
+        }else if(sessionData.err && sessionData.err.sessionExpire){
+          ctx.response.status = 401;
+          ctx.response.body = {success:false,sessionExpire:true,message:'session sessionExpire'}
+        }else{
+          ctx.response.status = 401;
+          ctx.response.body = {success: false,message:sessionData.err} 
+        }
+     } else if (action.name === 'login'){
+        var callback = await appsession.mcLogin(action.data)
+        ctx.response.body = callback;
+     }
+   }
+}
+
