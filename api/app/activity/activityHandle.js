@@ -51,7 +51,7 @@ exports.getActivityInfo = async function(action, session, callback){
             mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).insert(insertData, function(err,data){
               if (!err) {
               	var state = getActivityType(insertData, activityData, true)	
-                callback({success:true, data: {activity: activityData, activityState: state},message:'add activity success!'})
+                callback({success:true, data: {activity: activityData, activityState: state, partakeId: insertData.id},message:'add activity success!'})
               } else {
                 console.log('adminError: addActivity:'+ err)
                 callback({success: false, err: err})
