@@ -128,7 +128,7 @@ function getActivityType(activity, partake, role, userId) {
 }
 
 exports.partakeActivity = async function(action, session, callback) {
-  var activityType = action.activityType;
+  var activityType = action.actionType;
   if (activityType === 'type1') {
     var id = action.partakeId;
     delete action.ip;
