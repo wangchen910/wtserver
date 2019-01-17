@@ -31,7 +31,11 @@ exports.getActivityInfo = async function(action, session, callback){
           	mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne(partakeQuery, function(err,data){
               if (!err) {
               	var partakeData = data;
-              	var Someone = partakeData.participants === session.openId;
+                if (activityData === 'type1'){
+                  var Someone = true;
+                } else {
+                  var Someone = partakeData.participants === session.openId;
+                }
                 var state = getActivityType(activityData, partakeData, Someone, session.openId)
                 callback({success:true, data: {activity: activityData, activityState: state}})
               } else {
