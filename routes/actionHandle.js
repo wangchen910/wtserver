@@ -40,16 +40,20 @@ exports.handleAction = function (action, session) {
                backResult.success = result.success || false;
                backResult.message = result.success ? result.message || '200 ok!' : result.message || 'unknow error!';
                backResult.data = result.data
+               if (result.err){
+                backResult.err = result.err;
+               }
                resolve(backResult)
             });
           }catch(e){
-            resolve({err:e})
+            resolve({err:e, success: false})
           }
         } else {
-            resolve({err:'action is not Fond'})
+            console.log('error:action is not fond')
+            resolve({err:'action is not Fond', success: false})
         }
        } catch (e) {
-            resolve({err: e})
+            resolve({err: e, success: false})
        }
 	})
 }

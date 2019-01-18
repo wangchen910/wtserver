@@ -12,9 +12,12 @@ const qr = require('qr-image');
 
 exports.getActivityInfo = async function(action, session, callback){
 	var query = {};
+  action.activityId = 'dc6d0050-14e8-11e9-a275-c1c5f786cef5'
 	if (action.activityId) {
       query.id = action.activityId;
-	}
+	} else {
+     return callback({success: false, message: '请传活动id'})
+  }
 	mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).findOne(query, function(err,data){
        if (!err) {
        	  var activityData = data;           
@@ -24,40 +27,49 @@ exports.getActivityInfo = async function(action, session, callback){
             	return callback({success: true, data: {isOverdue: true, activity: activityData},message: '活动已过期'})
             }
           }
-          if (action.partakeId) {
-          	var partakeQuery = {
-          		id: action.partakeId
-          	};
-          	mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne(partakeQuery, function(err,data){
-              if (!err) {
-              	var partakeData = data;
-                if (activityData.type === 'type1'){
-                  var Someone = true;
-                } else {
-                  var Someone = partakeData.participants === session.openId;
-                }
-                var state = getActivityType(activityData, partakeData, Someone, session.openId)
-                callback({success:true, data: {activity: activityData, activityState: state}})
-              } else {
-                console.log('appError: getActivityInfo:'+ err)
-                callback({success: false, err: err})
-              }
-            })
+          //判断是否存在 参与id
+          var partakeQuery = {};
+          if (action.partakeId){
+            partakeQuery = {
+              id: action.partakeId
+            };
           } else {
-            var insertData = {};
-            insertData.id = uuidv4();
-            insertData.activityId = activityData.id;
-            insertData.participants = session.openId;
-            mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).insert(insertData, function(err,data){
-              if (!err) {
-              	var state = getActivityType(insertData, activityData, true)	
-                callback({success:true, data: {activity: activityData, activityState: state, partakeId: insertData.id},message:'add activity success!'})
-              } else {
-                console.log('adminError: addActivity:'+ err)
-                callback({success: false, err: err})
-              }
-            })
+            partakeQuery = {
+              activityId: action.activityId,
+              participants: session.openId
+            };
           }
+          mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne(partakeQuery, function(err,data){
+            if (!err) {
+              if (data) {
+                  var partakeData = data;
+                  var Someone = partakeData.participants === session.openId;
+                  var state = getActivityType(activityData, partakeData, Someone, session.openId)
+                  if (action.partakeId) {
+                    callback({success:true, data: {activity: activityData, activityState: state}})
+                  } else {
+                    callback({success:true, data: {activity: activityData, activityState: state, partakeId: partakeData.id}})
+                  }
+              } else {
+                var insertData = {};
+                insertData.id = uuidv4();
+                insertData.activityId = activityData.id;
+                insertData.participants = session.openId;
+                mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).insert(insertData, function(err,data){
+                  if (!err) {
+                    var state = getActivityType(insertData, activityData, true) 
+                    callback({success:true, data: {activity: activityData, activityState: state, partakeId: insertData.id},message:'add activity_partake success!'})
+                  } else {
+                    console.log('activityError: activity_partake error:'+ err)
+                    callback({success: false, err: err})
+                  }
+                })
+              }          
+            } else {
+              console.log('appError: getActivityInfo:'+ err)
+              callback({success: false, err: err})
+            }
+          })
        } else {
         console.log('appError: getActivityInfo:'+ err)
         callback({success: false, err: err})

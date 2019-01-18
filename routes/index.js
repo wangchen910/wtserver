@@ -21,7 +21,7 @@ exports.routeAction = async (ctx) => {
             if (!sessionData.err){
                 var result = await actionHandle.handleAction(action, sessionData)
                 if(result.err){
-                    ctx.response.body = {success: false,message:result.err}
+                    ctx.response.body = {success: false, message:result.err, err: true}
                 }else{
                     ctx.response.body = result
                 }
