@@ -146,16 +146,30 @@ function getActivityType(activity, partake, role, userId) {
 exports.partakeActivity = async function(action, session, callback) {
   var activityType = action.actionType;
   if (activityType === 'type1') {
-    var id = action.partakeId;
+    var partakeId = action.partakeId;
+    var query = {}
+    query.activityId = action.activityId;
+    query.phone = action.phone;
     delete action.ip;
     delete action.partakeId;
-    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: id}, {$set: action},function(err){
-      if (!err) {
-        callback({success:true, message:'update Merchants success!'}) 
+    delete action.activityId;
+    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne(query, function(err,data){
+      if (!err){
+         if (data) {
+           callback({success:false, message:'手机号已参加！'})
+         } else {
+           mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, {$set: action},function(err){
+             if (!err) {
+               callback({success:true, message:'update Merchants success!'}) 
+             } else {
+               console.log('appError: partakeActivity:'+ err)
+               callback({success: false, err: err})
+             }
+           })
+         }
       } else {
-        console.log('appError: partakeActivity:'+ err)
         callback({success: false, err: err})
-      }
+      }  
     })
   } else if (activityType === 'type2') {
     let partakeId = action.partakeId;
