@@ -23,7 +23,8 @@ var actions = {
      },
      activity: {
        getActivityInfo: activityHandle.getActivityInfo,
-       partakeActivity: activityHandle.partakeActivity
+       partakeActivity: activityHandle.partakeActivity,
+       getLikeUserList: activityHandle.getLikeUserList
      }
    }
 }

@@ -178,7 +178,6 @@ exports.partakeActivity = async function(action, session, callback) {
   } else if (activityType === 'type2') {
     let partakeId = action.partakeId;
     let userId = session.openId;
-    let userInfo = action.userInfo;
     mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, {$addToSet: {user_like_arr: userId}},function(err){
       if (!err) {
         callback({success:true, message:'user like success!'}) 
@@ -226,4 +225,27 @@ async function getUserInfo (id) {
       }
     })
   })
+}
+
+exports.getLikeUserList = async function(action, session, callback){
+   var partakeId = action.partakeId;
+   mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne({id: partakeId}, async function(err, data){
+     if (!err) {
+      var userList = []
+      if (data && data.user_like_arr){
+        for (var i = 0; i < data.user_like_arr.length; i++) {
+          var userInfo = await getUserInfo(data.user_like_arr[i])
+          if (userInfo.success){
+            userList.push(userInfo.userInfo)
+          }
+        }
+        callback({success: true, data: {userList: userList}})
+      }else{
+        callback({success: true, data: {userList: []}}) 
+      }
+     } else {
+       console.log('appError: getLikeUserList:'+ err)
+       callback({success: false, err: err})
+     }
+   })
 }
