@@ -39,16 +39,20 @@ exports.getActivityInfo = async function(action, session, callback){
               participants: session.openId
             };
           }
-          mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne(partakeQuery, function(err,data){
+          mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne(partakeQuery, async function(err,data){
             if (!err) {
+              var userInfo = {}
               if (data) {
                   var partakeData = data;
                   var Someone = partakeData.participants === session.openId;
+                  if (!Someone && activityData.type === 'type2') {
+                    userInfo = await getUserInfo(partakeData.participants);
+                  }
                   var state = getActivityType(activityData, partakeData, Someone, session.openId)
                   if (action.partakeId) {
-                    callback({success:true, data: {activity: activityData, activityState: state}})
+                    callback({success:true, data: {activity: activityData, activityState: state, userInfo: userInfo}})
                   } else {
-                    callback({success:true, data: {activity: activityData, activityState: state, partakeId: partakeData.id}})
+                    callback({success:true, data: {activity: activityData, activityState: state, partakeId: partakeData.id, userInfo:userInfo}})
                   }
               } else {
                 var insertData = {};
@@ -58,7 +62,7 @@ exports.getActivityInfo = async function(action, session, callback){
                 mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).insert(insertData, function(err,data){
                   if (!err) {
                     var state = getActivityType(insertData, activityData, true) 
-                    callback({success:true, data: {activity: activityData, activityState: state, partakeId: insertData.id},message:'add activity_partake success!'})
+                    callback({success:true, data: {activity: activityData, activityState: state, partakeId: insertData.id, userInfo: userInfo},message:'add activity_partake success!'})
                   } else {
                     console.log('activityError: activity_partake error:'+ err)
                     callback({success: false, err: err})
@@ -205,4 +209,21 @@ exports.getQrImage = async function(data, callback) {
    var qr_svg = qr.imageSync(data.str, { type: 'png' });
    var base64 = 'data:image/png;base64,'+qr_svg.toString('base64');
    callback(base64)
+}
+
+async function getUserInfo (id) {
+  return new Promise(function (resolve, reject){
+    mongo.db(fields.DEFAULT_DB).collection(fields.USER).findOne({id: id},function(err,data){
+      if (!err){
+        if (data&&data.userInfo){
+          userInfo = data.userInfo;
+          resolve({success:true, userInfo:userInfo})
+        }else{
+          reject({success:false,message:'not user info'})
+        }
+      }else {
+        reject({success:false,message:err})
+      }
+    })
+  })
 }
