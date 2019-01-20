@@ -178,9 +178,20 @@ exports.partakeActivity = async function(action, session, callback) {
   } else if (activityType === 'type2') {
     let partakeId = action.partakeId;
     let userId = session.openId;
-    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, {$addToSet: {user_like_arr: userId}},function(err){
+    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne({id: partakeId, user_like_arr: userId},function(err, data){
       if (!err) {
-        callback({success:true, message:'user like success!'}) 
+        if (data){
+           callback({success:true, data:{likeRepeat: true}}) 
+        } else {
+           mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, {$addToSet: {user_like_arr: userId}},function(err){
+             if (!err) {
+               callback({success:true, message:'user like success!'}) 
+             } else {
+               console.log('appError: partakeActivityLike:'+ err)
+               callback({success: false, err: err})
+             }
+           }) 
+        } 
       } else {
         console.log('appError: partakeActivityLike:'+ err)
         callback({success: false, err: err})
