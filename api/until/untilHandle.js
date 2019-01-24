@@ -1,8 +1,12 @@
 const pay = require(__baseDir+'/until/pay')
+const path = require('path')
 const mongo = require(__baseDir+'/until/mongo')
 const fields = require(__baseDir+'/api/common/fields')
 const url = require('url')
 const node_request = require('request')
+const config = require(__baseDir+'/serverConfig')
+const querystring = require('querystring');
+const rediscli = require(path.join(__baseDir+'/until/redis')).connect
 exports.pay = async function(action, session, callback){
     if (!action.ip || !action.fee || !action.body || !action.address || !action.commodityId){
     	return callback({success: true, message:'缺少参数'})
@@ -70,5 +74,72 @@ exports.removeImage = async function(action) {
       }
     })
   })
+}
+
+
+exports.getAccessToken = async function(){
+  return new Promise((resolve, reject) => {
+    rediscli.getClient().get('access_token',function(err,res){
+        if(err || !res){
+          if (err) {
+            console.log('redis error:' + err)
+            return
+          }
+          var accessUrl = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+config.appId+'&secret='+config.secret;
+          node_request(accessUrl, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+              var bodyData = JSON.parse(body);
+              if (bodyData.expires_in === 7200){
+                rediscli.getClient().set('access_token', bodyData.access_token, function(err,res){
+                  if(!err){
+                    rediscli.getClient().expire('access_token', 60*60);
+                    resolve(bodyData.access_token)
+                  }else{
+                    console.log('getAccessToken error:'+ err)
+                  }
+                })
+              }
+            } else {
+              console.log('getAccessToken error:'+ error)
+            }
+          });
+        } else {
+           resolve(res)
+        }
+    });
+  })
+}
+
+exports.getQrImage = async function(obj){
+  var access_token = await exports.getAccessToken();
+  var qrUrl = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token='+access_token
+  var requestData = {scene: '', access_token: access_token, width: 280}
+  if (obj.page) {
+    requestData.page = obj.page;
+  }
+  if (obj.scene) {
+    requestData.scene = obj.scene;
+  }
+  var body = querystring.stringify(requestData); 
+  return new Promise((resolve, reject)=>{
+    node_request({
+      url: qrUrl,
+      method: "POST",
+      encoding: null,
+      json: true,
+      headers: {
+        "content-type": "application/json"
+      },
+      body: {
+        "width": 100,
+        "scene": 'wangtao' 
+      }
+    }, function(error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var base64 = 'data:image/png;base64,'+body.toString('base64')
+        resolve(base64)
+      }
+    });
+  }) 
 }
 

@@ -4,6 +4,7 @@ const fields = require(__baseDir+'/api/common/fields')
 const uuidv4 = require('uuid/v1')
 const until = require(__baseDir+'/api/until/untilHandle')
 const qr = require('qr-image');
+
 // type1 手机号营销
 // type2 集赞营销
 // ActState:1 手机号活动：1,集赞活动：2
@@ -11,7 +12,7 @@ const qr = require('qr-image');
 // QRState: 2 集赞中：1 ,已集满:2,已领取:3,活动已经结束:0
 
 exports.getActivityInfo = async function(action, session, callback){
-	var query = {};
+  var query = {};
   action.activityId = 'dc6d0050-14e8-11e9-a275-c1c5f786cef5'
 	if (action.activityId) {
       query.id = action.activityId;
@@ -215,7 +216,6 @@ exports.partakeActivityLike = async function(action, session, callback) {
 }
 
 exports.getQrImage = async function(data, callback) {
-   console.log(data.str)
    var qr_svg = qr.imageSync(data.str, { type: 'png' });
    var base64 = 'data:image/png;base64,'+qr_svg.toString('base64');
    callback(base64)
@@ -259,4 +259,9 @@ exports.getLikeUserList = async function(action, session, callback){
        callback({success: false, err: err})
      }
    })
+}
+
+exports.getQrCode = async function(action, session, callback){
+  var img = await until.getQrImage(action)
+  callback({success: true, data:{img: img}})
 }
