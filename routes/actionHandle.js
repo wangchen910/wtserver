@@ -25,7 +25,8 @@ var actions = {
        getActivityInfo: activityHandle.getActivityInfo,
        partakeActivity: activityHandle.partakeActivity,
        getLikeUserList: activityHandle.getLikeUserList,
-       getQrCode: activityHandle.getQrCode
+       getQrCode: activityHandle.getQrCode,
+       getActivityList: activityHandle.getActivityList
      }
    }
 }

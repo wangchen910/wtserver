@@ -13,7 +13,7 @@ const qr = require('qr-image');
 
 exports.getActivityInfo = async function(action, session, callback){
   var query = {};
-  action.activityId = 'dc6d0050-14e8-11e9-a275-c1c5f786cef5'
+  //action.activityId = 'dc6d0050-14e8-11e9-a275-c1c5f786cef5'
 	if (action.activityId) {
       query.id = action.activityId;
 	} else {
@@ -264,4 +264,24 @@ exports.getLikeUserList = async function(action, session, callback){
 exports.getQrCode = async function(action, session, callback){
   var img = await until.getQrImage(action)
   callback({success: true, data:{img: img}})
+}
+
+exports.getActivityList = async function(action, session, callback){
+  var activityQuery = {};
+  mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).find(activityQuery,{sort: {recNums: -1}}).toArray(function(err,data){
+    if (!err) {
+      // mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).find(activityQuery).toArray(function(err,data){
+      //   if (!err) {
+      //     callback({success: true, data: {recData: recData[0], activityList: data}})
+      //   } else {
+      //     console.log('appError: getActivityList:'+ err)
+      //     callback({success: false, err: err})
+      //   }
+      // })
+      callback({success: true, data: data})
+    } else {
+      console.log('appError: getActivityList:'+ err)
+      callback({success: false, err: err})
+    }
+  })
 }

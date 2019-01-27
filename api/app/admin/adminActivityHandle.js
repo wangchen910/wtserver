@@ -33,6 +33,8 @@ exports.addActivity = async function(action, session, callback) {
   query.type = action.type;
   query.date = action.date;
   query.nums = action.nums;
+  query.isRec = action.isRec;
+  query.recNums = action.recNums;
   query.conditions = action.conditions;
    if (action.id) {
      mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).update({id: action.id}, {$set: query},function(err){
