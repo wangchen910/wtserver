@@ -268,7 +268,7 @@ exports.getQrCode = async function(action, session, callback){
 
 exports.getActivityList = async function(action, session, callback){
   var activityQuery = {};
-  var limit = action.limit || 1;
+  var limit = action.limit || 2;
   var page = action.page || 1;
   var skip = limit * (page - 1);
   mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).find(activityQuery,{sort: {recNums: -1}, skip: skip, limit: limit}).toArray(function(err,data){
