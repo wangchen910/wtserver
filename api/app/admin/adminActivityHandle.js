@@ -27,6 +27,12 @@ exports.getActivityList = async function(action, session, callback){
 
 exports.addActivity = async function(action, session, callback) {
   let query = {}
+  let merchants = action.merchants || {}
+  if (typeof merchants === 'string') {
+    merchants = JSON.parse(action.merchants) 
+  } else {
+    merchants = action.merchants
+  }
   query.title = action.title;
   query.imgUrl = action.imgUrl;
   query.describe = action.describe;
@@ -36,6 +42,9 @@ exports.addActivity = async function(action, session, callback) {
   query.isRec = action.isRec;
   query.recNums = action.recNums;
   query.conditions = action.conditions;
+  delete merchants._id;
+  delete merchants.password;
+  query.merchants = merchants;
    if (action.id) {
      mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).update({id: action.id}, {$set: query},function(err){
        if (!err) {
