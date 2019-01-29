@@ -29,15 +29,19 @@ exports.getCommodity = async function(action, session, callback) {
 }
 
 exports.getCommodityList = async function(action, session, callback){
-   var query = {}
-	 mongo.db(fields.DEFAULT_DB).collection(fields.COMMODITY).find(query).toArray(function(err,data){
-       if (!err) {
-         callback({success:true, data: data})
-       } else {
-         console.log('appError: getCommodityList:'+ err)
-         callback({success: false, err: err})
-       }
-    })
+  var query = {}
+  var commodityQuery = {};
+  var limit = action.limit || 5;
+  var page = action.page || 1;
+  var skip = limit * (page - 1);
+  mongo.db(fields.DEFAULT_DB).collection(fields.COMMODITY).find(commodityQuery,{sort: {recNums: -1}, skip: skip, limit: limit}).toArray(function(err,data){
+    if (!err) {
+      callback({success: true, data: data})
+    } else {
+      console.log('appError: getCommodityList:'+ err)
+      callback({success: false, err: err})
+    }
+  })
 }
 
 exports.getOrderList = async function(action, session, callback){
