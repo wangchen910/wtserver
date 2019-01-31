@@ -7,7 +7,7 @@ const qr = require('qr-image');
 
 // type1 手机号营销
 // type2 集赞营销
-// ActState:1 手机号活动：1,集赞活动：2
+// ActState:1 手机号活动：1,集赞活动：2,支付领取：3
 // Someone: 2 朋友:1, 自己:2
 // QRState: 2 集赞中：1 ,已集满:2,已领取:3,活动已经结束:0
 
@@ -134,6 +134,17 @@ function getActivityType(activity, partake, role, userId) {
        	 }
        }	
     }
+  } else if (activityObj.type === 'type3') {
+    activityState.ActState = 3;
+    if (partake.validation) {
+       activityState.QRState = 3
+    } else {
+       if (partake.payState) {
+         activityState.QRState = 2
+       } else {
+         activityState.QRState = 1
+       }
+    }
   }
   if (role) {
     // role 存在 是代表自己
@@ -198,6 +209,21 @@ exports.partakeActivity = async function(action, session, callback) {
         callback({success: false, err: err})
       }
     })
+  } else if (activityType === 'type3') {
+    var partakeId = action.partakeId;
+    delete action.ip;
+    delete action.partakeId;
+    delete action.activityId;
+    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, {$set: action},function(err){
+      if (!err) {
+        callback({success:true, message:'update payState success!'}) 
+      } else {
+        console.log('appError: partakeActivity:'+ err)
+        callback({success: false, err: err})
+      }
+    })
+  } else {
+    callback({success: false, err: 'no activity Type'})
   }
 }
 
