@@ -324,3 +324,40 @@ exports.getActivityList = async function(action, session, callback){
     }
   })
 }
+
+exports.getExchangeCard = async function(action, session, callback){
+  var query = {};
+  query.participants = session.openId;
+  query.partakeType = 'success';  
+  mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).find(query).limit(2).skip(0).toArray(async function(err, data){
+    if (!err) {
+      var backArr = [];
+      if (data.length > 0) {
+        for (var i = 0; i < data.length; i++) {
+          var activityData = await getActivityOne({id: data[i].activityId})
+          var backObj = {}
+          backObj.id = data[i].id;
+          backObj.activity = activityData;
+          backArr.push(backObj)
+        }
+        callback({success: true, data: backArr})
+      }
+    } else {
+      console.log('appError: getExchangeCard:'+ err)
+      callback({success: false, err: err})
+    }
+  })
+}
+
+async function getActivityOne(query) {
+  return new Promise((resolve, reject)=>{
+    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).findOne(query, function(err,data){
+       if (!err) {
+          resolve(data)
+       } else {
+        console.log('appError: getActivityOne:'+ err)
+        callback({success: false, err: err})
+       }
+     })
+  })
+}

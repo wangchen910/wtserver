@@ -28,6 +28,9 @@ var actions = {
        getQrCode: activityHandle.getQrCode,
        getActivityList: activityHandle.getActivityList,
        updatePayState: activityHandle.updatePayState
+     },
+     personalCenter: {
+       getExchangeCard: activityHandle.getExchangeCard
      }
    }
 }
