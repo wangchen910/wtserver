@@ -62,6 +62,7 @@ exports.getActivityInfo = async function(action, session, callback){
                 insertData.participants = session.openId;
                 mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).insert(insertData, function(err,data){
                   if (!err) {
+                    insertData.type = activityData.type;
                     var state = getActivityType(insertData, activityData, true) 
                     callback({success:true, data: {activity: activityData, activityState: state, partakeId: insertData.id, userInfo: userInfo},message:'add activity_partake success!'})
                   } else {
