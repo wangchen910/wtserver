@@ -69,7 +69,7 @@ exports.getActivityInfo = async function(action, session, callback){
                     callback({success: false, err: err})
                   }
                 })
-              }          
+              }
             } else {
               console.log('appError: getActivityInfo:'+ err)
               callback({success: false, err: err})
@@ -174,6 +174,7 @@ exports.partakeActivity = async function(action, session, callback) {
          if (data) {
            callback({success:false, message:'手机号已参加！'})
          } else {
+           action.partakeType = 'success'
            mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, {$set: action},function(err){
              if (!err) {
                callback({success:true, message:'update Merchants success!'}) 
@@ -190,12 +191,19 @@ exports.partakeActivity = async function(action, session, callback) {
   } else if (activityType === 'type2') {
     let partakeId = action.partakeId;
     let userId = session.openId;
-    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne({id: partakeId, user_like_arr: userId},function(err, data){
+    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne({id: partakeId},function(err, data){
       if (!err) {
-        if (data){
+        if (data.user_like_arr.indexOf(userId)!==-1){
            callback({success:true, data:{likeRepeat: true}}) 
         } else {
-           mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, {$addToSet: {user_like_arr: userId}},function(err){
+           var likeLenth = data.user_like_arr.length + 1;
+           var setQuery = {}
+           if (likeLenth >= action.type2nums) {
+             setQuery = {$addToSet: {user_like_arr: userId}, $set: {partakeType: 'success'}}
+           } else {
+             setQuery = {$addToSet: {user_like_arr: userId}}
+           }
+           mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, setQuery,function(err){
              if (!err) {
                callback({success:true, message:'user like success!'}) 
              } else {
@@ -214,6 +222,7 @@ exports.partakeActivity = async function(action, session, callback) {
     delete action.ip;
     delete action.partakeId;
     delete action.activityId;
+    action.partakeType = 'success';
     mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).update({id: partakeId}, {$set: action},function(err){
       if (!err) {
         callback({success:true, message:'update payState success!'}) 
