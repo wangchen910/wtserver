@@ -193,10 +193,10 @@ exports.partakeActivity = async function(action, session, callback) {
     let userId = session.openId;
     mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne({id: partakeId},function(err, data){
       if (!err) {
-        if (data.user_like_arr.indexOf(userId)!==-1){
+        if (data.user_like_arr && data.user_like_arr.indexOf(userId)!==-1){
            callback({success:true, data:{likeRepeat: true}}) 
         } else {
-           var likeLenth = data.user_like_arr.length + 1;
+           var likeLenth = data.user_like_arr ? data.user_like_arr.length + 1 : 0;
            var setQuery = {}
            if (likeLenth >= action.type2nums) {
              setQuery = {$addToSet: {user_like_arr: userId}, $set: {partakeType: 'success'}}
