@@ -196,7 +196,7 @@ exports.partakeActivity = async function(action, session, callback) {
         if (data.user_like_arr && data.user_like_arr.indexOf(userId)!==-1){
            callback({success:true, data:{likeRepeat: true}}) 
         } else {
-           var likeLenth = data.user_like_arr ? data.user_like_arr.length + 1 : 0;
+           var likeLenth = data.user_like_arr ? data.user_like_arr.length + 1 : 1;
            var setQuery = {}
            if (likeLenth >= action.type2nums) {
              setQuery = {$addToSet: {user_like_arr: userId}, $set: {partakeType: 'success'}}
