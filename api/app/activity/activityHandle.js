@@ -327,9 +327,12 @@ exports.getActivityList = async function(action, session, callback){
 
 exports.getExchangeCard = async function(action, session, callback){
   var query = {};
+  var limit = action.limit || 2;
+  var skip = action.skip || 0;
   query.participants = session.openId;
-  query.partakeType = 'success';  
-  mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).find(query).limit(2).skip(0).toArray(async function(err, data){
+  query.partakeType = 'success';
+  query.validation = {$ne: true}
+  mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).find(query).limit(limit).skip(skip).toArray(async function(err, data){
     if (!err) {
       var backArr = [];
       if (data.length > 0) {
