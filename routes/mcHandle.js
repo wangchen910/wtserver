@@ -1,7 +1,9 @@
 var mcHandle = require(__baseDir+'/api/app/mc/mcHandle')
 var actions = {
    qrValidate: mcHandle.qrValidate,
-   getLoginState: mcHandle.getLoginState
+   getLoginState: mcHandle.getLoginState,
+   getActivityList: mcHandle.getActivityList,
+   getUserList: mcHandle.getUserList
 }
 
 
