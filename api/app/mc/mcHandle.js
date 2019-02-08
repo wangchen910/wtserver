@@ -12,3 +12,7 @@ exports.qrValidate = async function(data, session, callback){
     }
   })
 }
+
+exports.getLoginState = async function(data, session, callback){
+	callback({success: true, message: 'get success!'})
+}

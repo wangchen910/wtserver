@@ -134,19 +134,43 @@ exports.checkMcSession = function(id){
 }
 
 exports.mcLogin = function(action){
-  var key = uuidv1()
   var value = action;
-  return new Promise((resolve,reject)=>{
-    if (action.user === 'wangtao'&&action.pass ==='wangtao'){
-      rediscli.getClient().set(_mckey(key), JSON.stringify(value), function(err,res){
+  return new Promise(async (resolve,reject)=>{
+    var obj = await authMclogin(value)
+    if (obj.success) {
+      var userInfo = obj.userInfo;
+      var key = userInfo.id;
+      rediscli.getClient().set(_mckey(key), JSON.stringify(userInfo), function(err,res){
         if(!err){
-          resolve({success:true,sessionId:key})  
+          resolve({success:true,sessionId:key,data: userInfo})  
         }else{
           resolve({err:err})
         }
       })
-    }else {
-      resolve({err:'pass or user error'})
+    } else {
+      resolve({success: false})
     }
+  })
+}
+
+async function authMclogin (obj) {
+  return new Promise(function (resolve, reject){
+    var username = obj.user;
+    var pass = obj.pass;
+    mongo.db(fields.DEFAULT_DB).collection(fields.MERCHANTS).findOne({phone: username},function(err,data){
+      if (!err){
+        if (data){
+          if (data.password === pass){
+            resolve({success:true, userInfo:data})
+          } else {
+            resolve({success: false, message: 'pass or username error!'})
+          }
+        }else{
+          resolve({success:false,message:'not merchants info'})
+        }
+      }else {
+        resolve({success:false,message:err})
+      }
+    })
   })
 }

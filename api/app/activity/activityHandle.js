@@ -344,6 +344,8 @@ exports.getExchangeCard = async function(action, session, callback){
           backArr.push(backObj)
         }
         callback({success: true, data: backArr})
+      } else {
+        callback({success: true, data: []})
       }
     } else {
       console.log('appError: getExchangeCard:'+ err)
