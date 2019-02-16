@@ -276,19 +276,23 @@ async function getUserInfo (id) {
 
 exports.getLikeUserList = async function(action, session, callback){
    var partakeId = action.partakeId;
+   var limit = 1;
+   var skip = (action.page - 1)*limit;
    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne({id: partakeId}, async function(err, data){
      if (!err) {
       var userList = []
       if (data && data.user_like_arr){
-        for (var i = 0; i < data.user_like_arr.length; i++) {
+        var more = (skip + limit) < data.user_like_arr.length;
+        var length =  (skip + limit) <= data.user_like_arr.length ? (skip + limit) : data.user_like_arr.length;
+        for (var i = skip; i < length; i++) {
           var userInfo = await getUserInfo(data.user_like_arr[i])
           if (userInfo.success){
             userList.push(userInfo.userInfo)
           }
         }
-        callback({success: true, data: {userList: userList}})
+        callback({success: true, data: {userList: userList, more:more, userLikeNum: data.user_like_arr.length}})
       }else{
-        callback({success: true, data: {userList: []}}) 
+        callback({success: true, data: {userList: [], more: false}}) 
       }
      } else {
        console.log('appError: getLikeUserList:'+ err)
