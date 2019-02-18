@@ -114,14 +114,6 @@ exports.getAccessToken = async function(){
 exports.getQrImage = async function(obj){
   var access_token = await exports.getAccessToken();
   var qrUrl = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token='+access_token
-  var requestData = {scene: '', access_token: access_token, width: 280}
-  if (obj.page) {
-    requestData.page = obj.page;
-  }
-  if (obj.scene) {
-    requestData.scene = obj.scene;
-  }
-  var body = querystring.stringify(requestData); 
   return new Promise((resolve, reject)=>{
     node_request({
       url: qrUrl,
@@ -133,7 +125,7 @@ exports.getQrImage = async function(obj){
       },
       body: {
         "width": 100,
-        "scene": 'wangtao',
+        "scene": 'lvliang',
         "page": 'pages/activity/index'
       }
     }, function(error, response, body) {
