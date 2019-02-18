@@ -133,9 +133,11 @@ exports.getQrImage = async function(obj){
       },
       body: {
         "width": 100,
-        "scene": 'wangtao' 
+        "scene": 'wangtao',
+        "page": 'pages/activity/index'
       }
     }, function(error, response, body) {
+        console.log(body)
       if (!error && response.statusCode == 200) {
         var base64 = 'data:image/png;base64,'+body.toString('base64')
         resolve(base64)
