@@ -134,7 +134,7 @@ exports.getQrImage = async function(obj){
       body: {
         "width": 100,
         "scene": 'wangtao',
-        "page": 'pages/home/index'
+        "page": 'miniprogram/pages/home/index'
       }
     }, function(error, response, body) {
         console.log(body)
