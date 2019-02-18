@@ -276,7 +276,7 @@ async function getUserInfo (id) {
 
 exports.getLikeUserList = async function(action, session, callback){
    var partakeId = action.partakeId;
-   var limit = 1;
+   var limit = 5;
    var skip = (action.page - 1)*limit;
    mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY_PARTAKE).findOne({id: partakeId}, async function(err, data){
      if (!err) {
