@@ -126,7 +126,7 @@ exports.getQrImage = async function(obj){
       body: {
         "width": 100,
         "scene": 'lvliang',
-        "page": 'pages/activity/index'
+        "page": 'pages/home/index'
       }
     }, function(error, response, body) {
         console.log(body)
