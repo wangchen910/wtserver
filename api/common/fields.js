@@ -16,3 +16,5 @@ exports.ACTIVITY = 'activity'
 exports.MERCHANTS = 'merchants'
 
 exports.ACTIVITY_PARTAKE = 'activity_partake'
+
+exports.SCENE = 'scene'

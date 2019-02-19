@@ -7,6 +7,7 @@ const node_request = require('request')
 const config = require(__baseDir+'/serverConfig')
 const querystring = require('querystring');
 const rediscli = require(path.join(__baseDir+'/until/redis')).connect
+const md5cipher = require(path.join(__baseDir + '/until/crypto')).cipher
 exports.pay = async function(action, session, callback){
     if (!action.ip || !action.fee || !action.body || !action.address || !action.commodityId){
     	return callback({success: true, message:'缺少参数'})
@@ -112,30 +113,87 @@ exports.getAccessToken = async function(){
 }
 
 exports.getQrImage = async function(obj){
+  var type = obj.type;
+  var sceneObj = await exports.setScene(obj)
   var access_token = await exports.getAccessToken();
   var qrUrl = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token='+access_token
+  var page = 'pages/home/index'
+  if (type === 'activity') {
+    page = 'pages/activity/index'
+  }
   return new Promise((resolve, reject)=>{
-    node_request({
-      url: qrUrl,
-      method: "POST",
-      encoding: null,
-      json: true,
-      headers: {
-        "content-type": "application/json"
-      },
-      body: {
-        "width": 100,
-        "scene": 'lvliang',
-        "page": 'pages/home/index'
-      }
-    }, function(error, response, body) {
-        console.log(body)
-      if (!error && response.statusCode == 200) {
-        var base64 = 'data:image/png;base64,'+body.toString('base64')
-        resolve(base64)
-      }
-    });
+    if (sceneObj.success){
+      var scene = sceneObj.scene
+      node_request({
+        url: qrUrl,
+        method: "POST",
+        encoding: null,
+        json: true,
+        headers: {
+          "content-type": "application/json"
+        },
+        body: {
+          "width": 100,
+          "scene": scene,
+          "page": page
+        }
+      }, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+          var base64 = 'data:image/png;base64,'+body.toString('base64')
+          resolve(base64)
+        }
+      });  
+    }    
   }) 
+}
+
+
+
+
+exports.setScene = async function(obj){
+  var scene = md5cipher(obj.scene)
+  var query = {}
+  query.id = scene;
+  delete obj.ip;
+  delete obj.scene;
+  return new Promise((resolve, reject)=>{
+    mongo.db(fields.DEFAULT_DB).collection(fields.SCENE).findOne(query,function(err, data){
+       if (!err) {
+         if (data) {
+           resolve({success:true, scene: scene})
+         } else {
+           var insertData = obj;
+           insertData.id = scene;
+           mongo.db(fields.DEFAULT_DB).collection(fields.SCENE).insert(insertData, function(err){
+             if (!err) {
+               resolve({success: true, scene: scene})
+             } else {
+               console.log('appError: setScene:'+ err)
+               resolve({success: false})
+             }
+           })       
+         }
+       } else {
+         console.log('appError: setScene:'+ err)
+         resolve({success: false})
+       }
+     })
+  })
+}
+
+exports.getSceneData = async function(scene){
+  var query = {}
+  query.id = scene;
+  return new Promise((resolve, reject)=>{
+    mongo.db(fields.DEFAULT_DB).collection(fields.SCENE).findOne(query,function(err, data){
+       if (!err && data) {
+         resolve({success: true, data: data})
+       } else {
+         console.log('appError: getScene:'+ err)
+         resolve({success: false})
+       }
+     })
+  })
 }
 
 

@@ -17,11 +17,21 @@ exports.getActivityInfo = async function(action, session, callback){
 	if (action.activityId) {
       query.id = action.activityId;
 	} else {
-     return callback({success: false, message: '请传活动id'})
+     if (action.scene){
+       var sceneData = await until.getSceneData(action.scene);
+       if (sceneData.success) {
+         query.id = sceneData.data.activityId;
+         action = sceneData.data;
+       } else {
+         return callback({success: false, message: 'scene不存在或者获取错误'})
+       }
+     } else {
+       return callback({success: false, message: '请传活动id或者scene'})
+     }
   }
 	mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).findOne(query, function(err,data){
        if (!err) {
-       	  var activityData = data;           
+       	  var activityData = data;       
           if (activityData) {
             var overdue= isOverdue(activityData.date)
             if (overdue) {
@@ -50,11 +60,7 @@ exports.getActivityInfo = async function(action, session, callback){
                     userInfo = await getUserInfo(partakeData.participants);
                   }
                   var state = getActivityType(activityData, partakeData, Someone, session.openId)
-                  if (action.partakeId) {
-                    callback({success:true, data: {activity: activityData, activityState: state, userInfo: userInfo}})
-                  } else {
-                    callback({success:true, data: {activity: activityData, activityState: state, partakeId: partakeData.id, userInfo:userInfo}})
-                  }
+                  callback({success:true, data: {activity: activityData, activityState: state, partakeId: partakeData.id, userInfo:userInfo}})
               } else {
                 var insertData = {};
                 insertData.id = uuidv4();
