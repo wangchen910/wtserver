@@ -1,5 +1,5 @@
 
-exports.DEFAULT_DB = 'xiangning'
+exports.DEFAULT_DB = 'lvliang'
 exports.USER = 'user'
 
 exports.TOKEN = 'file_token_list'
