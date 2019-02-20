@@ -114,6 +114,8 @@ exports.getAccessToken = async function(){
 
 exports.getQrImage = async function(obj){
   var type = obj.type;
+  console.log(obj)
+  console.log('YYYYYYYY')
   var sceneObj = await exports.setScene(obj)
   var access_token = await exports.getAccessToken();
   var qrUrl = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token='+access_token
