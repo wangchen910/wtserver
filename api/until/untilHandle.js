@@ -162,6 +162,8 @@ exports.setScene = async function(obj){
     mongo.db(fields.DEFAULT_DB).collection(fields.SCENE).findOne(query,function(err, data){
        if (!err) {
          if (data) {
+           console.log(scene)
+           console.log('------------')
            resolve({success:true, scene: scene})
          } else {
            var insertData = obj;
