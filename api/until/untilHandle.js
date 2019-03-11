@@ -81,7 +81,7 @@ exports.removeImage = async function(action) {
 
 exports.getAccessToken = async function(){
   return new Promise((resolve, reject) => {
-    rediscli.getClient().get('access_token',function(err,res){
+    rediscli.getClient().get(access_token(),function(err,res){
         if(err || !res){
           if (err) {
             console.log('redis error:' + err)
@@ -92,9 +92,9 @@ exports.getAccessToken = async function(){
             if (!error && response.statusCode == 200) {
               var bodyData = JSON.parse(body);
               if (bodyData.expires_in === 7200){
-                rediscli.getClient().set('access_token', bodyData.access_token, function(err,res){
+                rediscli.getClient().set(access_token(), bodyData.access_token, function(err,res){
                   if(!err){
-                    rediscli.getClient().expire('access_token', 60*60);
+                    rediscli.getClient().expire(access_token(), 60*60);
                     resolve(bodyData.access_token)
                   }else{
                     console.log('getAccessToken error:'+ err)
@@ -112,10 +112,12 @@ exports.getAccessToken = async function(){
   })
 }
 
+function access_token () {
+  return 'access_token.'+fields.DEFAULT_DB
+}
+
 exports.getQrImage = async function(obj){
   var type = obj.type;
-  console.log(obj)
-  console.log('YYYYYYYY')
   var sceneObj = await exports.setScene(obj)
   var access_token = await exports.getAccessToken();
   var qrUrl = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token='+access_token
@@ -162,8 +164,6 @@ exports.setScene = async function(obj){
     mongo.db(fields.DEFAULT_DB).collection(fields.SCENE).findOne(query,function(err, data){
        if (!err) {
          if (data) {
-           console.log(scene)
-           console.log('------------')
            resolve({success:true, scene: scene})
          } else {
            var insertData = obj;
@@ -198,6 +198,13 @@ exports.getSceneData = async function(scene){
        }
      })
   })
+}
+
+
+exports.collectFormId = function(formId){
+  var query = {}
+  query.formId = formId;
+  mongo.db(fields.DEFAULT_DB).collection(fields.FORMID).insert(query)
 }
 
 

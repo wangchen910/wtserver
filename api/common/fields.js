@@ -16,5 +16,7 @@ exports.ACTIVITY = 'activity'
 exports.MERCHANTS = 'merchants'
 
 exports.ACTIVITY_PARTAKE = 'activity_partake'
-
+//小程序码内容
 exports.SCENE = 'scene'
+//推送消息
+exports.FORMID = 'formId'
