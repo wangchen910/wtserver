@@ -45,6 +45,7 @@ exports.addActivity = async function(action, session, callback) {
   delete merchants._id;
   delete merchants.password;
   query.merchants = merchants;
+  query.articleId = action.articleId;
    if (action.id) {
      mongo.db(fields.DEFAULT_DB).collection(fields.ACTIVITY).update({id: action.id}, {$set: query},function(err){
        if (!err) {

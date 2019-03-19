@@ -20,3 +20,6 @@ exports.ACTIVITY_PARTAKE = 'activity_partake'
 exports.SCENE = 'scene'
 //推送消息
 exports.FORMID = 'formId'
+
+//文章表
+exports.ARTICLE = 'article'

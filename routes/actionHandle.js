@@ -2,6 +2,7 @@ var shopHandle = require(__baseDir+'/api/app/shop/shopHandle')
 var untilHandle = require(__baseDir+'/api/until/untilHandle')
 var userHandle = require(__baseDir+'/api/app/user/userHandle')
 var activityHandle = require(__baseDir+'/api/app/activity/activityHandle')
+var articleHandle = require(__baseDir+'/api/app/article/articleHandle')
 var actions = {
    app:{
      shop: {
@@ -31,6 +32,9 @@ var actions = {
      },
      personalCenter: {
        getExchangeCard: activityHandle.getExchangeCard
+     },
+     article: {
+      getArticleInfo: articleHandle.getArticleInfo
      }
    }
 }
