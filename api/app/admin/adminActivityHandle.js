@@ -35,6 +35,7 @@ exports.addActivity = async function(action, session, callback) {
   }
   query.title = action.title;
   query.imgUrl = action.imgUrl;
+  query.shareImgUrl = action.shareImgUrl;
   query.describe = action.describe;
   query.type = action.type;
   query.date = action.date;
