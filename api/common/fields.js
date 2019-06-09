@@ -1,5 +1,5 @@
 
-exports.DEFAULT_DB = 'lvliang'
+exports.DEFAULT_DB = 'dingpiao'
 exports.USER = 'user'
 
 exports.TOKEN = 'file_token_list'
@@ -23,3 +23,6 @@ exports.FORMID = 'formId'
 
 //文章表
 exports.ARTICLE = 'article'
+
+//线路信息
+exports.LINE = 'line'

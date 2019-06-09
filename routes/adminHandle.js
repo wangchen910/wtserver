@@ -3,6 +3,7 @@ var adminOrderHandle = require(__baseDir+'/api/app/admin/adminOrderHandle')
 var adminActivityHandle = require(__baseDir+'/api/app/admin/adminActivityHandle')
 var adminMerchantsHandle = require(__baseDir+'/api/app/admin/adminMerchantsHandle')
 const articleHandle = require(__baseDir+'/api/app/admin/adminArticleHandle')
+const lineHandle = require(__baseDir+'/api/app/admin/lineHandle')
 var actions = {
    commodity: {
      getCommodityList: adminHandle.getCommodityList,
@@ -27,6 +28,11 @@ var actions = {
     getArticleList: articleHandle.getArticleList,
     addArticle: articleHandle.addArticle,
     removeArticle: articleHandle.removeArticle
+   },
+   line: {
+    addLineManage: lineHandle.addLineManage,
+    getLineManageList: lineHandle.getLineManageList,
+    removeLine: lineHandle.removeLine
    }
 }
 

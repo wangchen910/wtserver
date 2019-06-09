@@ -32,8 +32,6 @@ exports.routeAction = async (ctx) => {
             }
         } else if (action.name === 'login') {
            var callback = await appsession.login(action)
-           console.log(callback)
-           console.log('cccccccaaaaaaaaallllllbbbb')
            ctx.response.status = 200
            ctx.response.body = callback
         } else if (action.name === 'until') {

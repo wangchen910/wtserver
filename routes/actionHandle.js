@@ -3,13 +3,16 @@ var untilHandle = require(__baseDir+'/api/until/untilHandle')
 var userHandle = require(__baseDir+'/api/app/user/userHandle')
 var activityHandle = require(__baseDir+'/api/app/activity/activityHandle')
 var articleHandle = require(__baseDir+'/api/app/article/articleHandle')
+const lineHandle = require(__baseDir+'/api/app/line/lineHandle')
 var actions = {
    app:{
      shop: {
        buy: shopHandle.buy
      },
      until: {
-       pay: untilHandle.pay 
+       pay: untilHandle.pay,
+       bookingPay: untilHandle.bookingPay,
+       refund: untilHandle.refund
      },
      user: {
        addAddress: userHandle.addAddress,
@@ -35,6 +38,9 @@ var actions = {
      },
      article: {
       getArticleInfo: articleHandle.getArticleInfo
+     },
+     line: {
+      getLineManage: lineHandle.getLineManage
      }
    }
 }

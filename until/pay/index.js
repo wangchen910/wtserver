@@ -4,7 +4,7 @@ const config = require(__baseDir+'/serverConfig.js')
 const request = require(__baseDir+'/until/request')
 const node_request = require('request')
 const parseString = require('xml2js').parseString //转xml 为JSON对象
-
+const fs = require('fs')
 
 exports.pay = function(obj, callback){
   /*
@@ -74,6 +74,64 @@ exports.pay = function(obj, callback){
     }
    })
 }
+exports.refund = function(obj) {
+    /**obj
+     * total_fee 订单金额
+     * out_trade_no 订单号
+     */
+    return new Promise(function(resolve, reject){
+        try{
+          var total_fee = (obj.fee*100).toString(); // 订单价格 单位是 分
+          var settlement_refund_fee = (obj.fee*100).toString()
+          var refound_fee = ((obj.fee*100)/2).toString()
+          var nonce_str = stringRandom(16, {numbers: false});; // 随机字符串
+          // var out_trade_no = getWxPayOrdrID(); // 商户订单号
+          // var timestamp = Math.round(new Date().getTime()/1000); // 当前时间
+          var bodyData = '<xml>';
+          bodyData += '<appid>' + config.appId + '</appid>';  // 小程序ID
+          bodyData += '<mch_id>' + config.pay.mch_id + '</mch_id>'; // 商户号
+          bodyData += '<nonce_str>' + nonce_str + '</nonce_str>'; // 随机字符串
+          bodyData += '<out_trade_no>' + obj.out_trade_no + '</out_trade_no>'; // 商户订单号
+          bodyData += '<total_fee>' + total_fee + '</total_fee>'; // 总金额 单位为分
+          bodyData += '<refund_fee>' + refound_fee + '</refund_fee>'; // 总金额 单位为分 out_refund_no
+          bodyData += '<out_refund_no>' + obj.out_trade_no + '</out_refund_no>';
+          // 签名
+          var sign = refundjsapi(
+              config.appId,
+              config.pay.mch_id, 
+              nonce_str,  
+              obj.out_trade_no, 
+              total_fee,
+              refound_fee,
+              obj.out_trade_no
+          );
+          bodyData += '<sign>' + sign + '</sign>';
+          bodyData += '</xml>';
+          var url = 'https://api.mch.weixin.qq.com/secapi/pay/refund'
+          node_request({
+            url:url,
+            method: 'POST',
+            body: bodyData,
+            agentOptions: {
+                pfx: fs.readFileSync('./apiclient_cert.p12'), //微信商户平台证书,
+                passphrase: config.pay.mch_id // 商家id
+            }
+          },function(err, response, body){
+              console.log(bodyData)
+              console.log('body')
+             parseString(body,function(err,body){
+               if(!err){
+                 resolve(body)
+               } else {
+                  resolve({err: err})
+               }
+             })
+          })
+          }catch(e){
+            resolve({err: e})
+          }
+         })
+}
 //生成订单号
 function getWxPayOrdrID(){
         var myDate = new Date();
@@ -129,6 +187,23 @@ function paysignjsapi(appid,body,mch_id,nonce_str,notify_url,openid,out_trade_no
     md5Str = md5Str.toUpperCase();
     return md5Str;
 };
+// 退款签名
+function refundjsapi (appid, mch_id, nonce_str, out_trade_no, total_fee, refund_fee,out_refund_no) {
+    var ret = {
+        appid: appid,
+        mch_id: mch_id,
+        nonce_str: nonce_str,
+        out_trade_no:out_trade_no,
+        total_fee:total_fee,
+        refund_fee:refund_fee,
+        out_refund_no: out_refund_no
+    };
+    var str = raw(ret);
+    str = str + '&key='+config.pay.pay_key;
+    var md5Str = md5(str)
+    md5Str = md5Str.toUpperCase();
+    return md5Str;
+}
 
 function raw1(args) {
     var keys = Object.keys(args);
