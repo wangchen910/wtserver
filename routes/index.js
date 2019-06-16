@@ -196,7 +196,7 @@ exports.payAction = async (ctx) => {
   } 
 }
 exports.refoundAction = async (ctx) => {
-  console.log(ctx.request)
+  console.log(ctx.request.payBody.xml)
   console.log('退款通知。。。。。。。。。111')
   var payObj = parsePayData(ctx)
   if (payObj.result_code === 'SUCCESS') {
