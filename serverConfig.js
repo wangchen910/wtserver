@@ -27,7 +27,8 @@ module.exports={
 	  //商户号	
 	  mch_id: '1518701051',
 	  pay_key: 'aOQDxyJpYedNluHGUHknXLmnsnQLoufc',
-	  notify_url: 'https://www.beijixiong.club/payAction'
+	  notify_url: 'https://www.beijixiong.club/payAction',
+	  refound_notify_url: 'https://www.beijixiong.club/refoundAction'
 	},
 	imgUrl: 'https://www.beijixiong.club/fileDownload?fileId='
 }

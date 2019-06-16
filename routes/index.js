@@ -195,7 +195,24 @@ exports.payAction = async (ctx) => {
      }
   } 
 }
-
+exports.refoundAction = async (ctx) => {
+  console.log(ctx)
+  var payObj = parsePayData(ctx)
+  console.log(payObj)
+  console.log('退款通知。。。。。。。。。')
+  if (payObj.result_code === 'SUCCESS') {
+     var payResult = await payHandle.refoundAction(payObj)
+     if (!payResult.err) {
+       ctx.response.type = 'application/xml'
+       ctx.response.body = `<xml>
+       <return_code><![CDATA[SUCCESS]]></return_code>
+       <return_msg><![CDATA[OK]]></return_msg>
+       </xml>`
+     } else {
+       console.log('内部订单错误：'+ err )
+     }
+  } 
+}
 
 function parsePayData(ctx) {
   var req = ctx.request;

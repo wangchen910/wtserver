@@ -28,9 +28,10 @@ app.use(koaRoute.post('/fileUpload', routes.uploadFile))
 app.use(koaRoute.get('/fileDownload', routes.downloadFile))
 // app.use(routes.routeAction)
 app.use(koaRoute.post('/adminAction', routes.adminAction))
-
+// 支付成功通知
 app.use(koaRoute.post('/payAction', routes.payAction))
-
+// 退款成功通知
+app.use(koaRoute.post('/refoundAction', routes.refoundAction))
 app.use(koaRoute.post('/until', routes.untilAction))
 // 商家逻辑
 app.use(koaRoute.post('/mcAction', routes.mcAction))
