@@ -105,7 +105,8 @@ exports.refund = function(obj) {
               obj.out_trade_no, 
               total_fee,
               refound_fee,
-              obj.out_trade_no
+              obj.out_trade_no,
+              notify_url
           );
           bodyData += '<sign>' + sign + '</sign>';
           bodyData += '</xml>';
@@ -190,7 +191,7 @@ function paysignjsapi(appid,body,mch_id,nonce_str,notify_url,openid,out_trade_no
     return md5Str;
 };
 // 退款签名
-function refundjsapi (appid, mch_id, nonce_str, out_trade_no, total_fee, refund_fee,out_refund_no) {
+function refundjsapi (appid, mch_id, nonce_str, out_trade_no, total_fee, refund_fee,out_refund_no, notify_url) {
     var ret = {
         appid: appid,
         mch_id: mch_id,
@@ -198,7 +199,8 @@ function refundjsapi (appid, mch_id, nonce_str, out_trade_no, total_fee, refund_
         out_trade_no:out_trade_no,
         total_fee:total_fee,
         refund_fee:refund_fee,
-        out_refund_no: out_refund_no
+        out_refund_no: out_refund_no,
+        notify_url: notify_url
     };
     var str = raw(ret);
     str = str + '&key='+config.pay.pay_key;
