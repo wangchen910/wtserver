@@ -199,7 +199,11 @@ exports.payAction = async (ctx) => {
 exports.refoundAction = async (ctx) => {
   // if (payObj.result_code === 'SUCCESS') {
      let req_info = ctx.request.payBody.xml.req_info
+     console.log(req_info)
+     console.log('req_info=======')
      let aesDecryptInfo = crypto.aesDecryptInfo(req_info)
+     console.log(aesDecryptInfo)
+     console.log('aes=======')
      var payResult = await payHandle.refoundAction(aesDecryptInfo)
      // if (!payResult.err) {
        ctx.response.type = 'application/xml'

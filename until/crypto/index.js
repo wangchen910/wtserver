@@ -15,7 +15,6 @@ exports.aesEncrypt = function(data, key) {
 // AES解密
 exports.aesDecryptInfo = function(encryptedData) {
     let key = exports.cipher(config.pay.pay_key)
-    try {
         // 解密
         encryptedData = Buffer.from(encryptedData, 'base64')
         var iv = "";
@@ -24,9 +23,6 @@ exports.aesDecryptInfo = function(encryptedData) {
         let decoded = decipher.update(encryptedData, 'base64', 'utf8');
         decoded += decipher.final('utf8');
         return decoded;
-     } catch (err) {
-       throw new Error('Illegal Buffer')
-     }
 }
 // base64解码
 exports.base64 = function(encrypted) {
