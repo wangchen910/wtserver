@@ -210,7 +210,7 @@ exports.refoundAction = async (ctx) => {
      // } else {
      //  console.log('内部订单错误：'+ err )
      // }
-  } 
+  // } 
 }
 
 function parsePayData(ctx) {
