@@ -197,19 +197,19 @@ exports.payAction = async (ctx) => {
   } 
 }
 exports.refoundAction = async (ctx) => {
-  if (payObj.result_code === 'SUCCESS') {
+  // if (payObj.result_code === 'SUCCESS') {
      let req_info = ctx.request.payBody.xml.req_info
      let aesDecryptInfo = crypto.aesDecryptInfo(req_info)
-     var payResult = await payHandle.refoundAction(payObj)
-     if (!payResult.err) {
+     var payResult = await payHandle.refoundAction(aesDecryptInfo)
+     // if (!payResult.err) {
        ctx.response.type = 'application/xml'
        ctx.response.body = `<xml>
        <return_code><![CDATA[SUCCESS]]></return_code>
        <return_msg><![CDATA[OK]]></return_msg>
        </xml>`
-     } else {
-       console.log('内部订单错误：'+ err )
-     }
+     // } else {
+     //  console.log('内部订单错误：'+ err )
+     // }
   } 
 }
 
