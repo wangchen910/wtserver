@@ -197,7 +197,7 @@ exports.payAction = async (ctx) => {
   } 
 }
 exports.refoundAction = async (ctx) => {
-  // if (payObj.result_code === 'SUCCESS') {
+   if (ctx.request.payBody.xml.result_code[0] === 'SUCCESS') {
      let req_info = ctx.request.payBody.xml.req_info[0]
      console.log(req_info)
      console.log('req_info=======')
@@ -205,16 +205,16 @@ exports.refoundAction = async (ctx) => {
      console.log(aesDecryptInfo)
      console.log('aes=======')
      var payResult = await payHandle.refoundAction(aesDecryptInfo)
-     // if (!payResult.err) {
+     if (!payResult.err) {
        ctx.response.type = 'application/xml'
        ctx.response.body = `<xml>
        <return_code><![CDATA[SUCCESS]]></return_code>
        <return_msg><![CDATA[OK]]></return_msg>
        </xml>`
-     // } else {
-     //  console.log('内部订单错误：'+ err )
-     // }
-  // } 
+      } else {
+       console.log('内部订单错误：'+ err )
+      }
+   } 
 }
 
 function parsePayData(ctx) {
