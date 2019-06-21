@@ -10,6 +10,7 @@ var untilHandle = require('./untilHandle')
 var downloadHandle = require('./downloadHandle')
 var payHandle = require('./payHandle')
 var mcHandle = require('./mcHandle')
+var crypto = require(__baseDir+'/until/crypto')
 var _APP_SESSION_PREFIX = 'appsession.'
 exports.routeAction = async (ctx) => {
      var action = parseActionData(ctx.request,ctx);
@@ -196,11 +197,10 @@ exports.payAction = async (ctx) => {
   } 
 }
 exports.refoundAction = async (ctx) => {
-  console.log(ctx.request.payBody.xml)
-  console.log('退款通知。。。。。。。。。111')
-  var payObj = parsePayData(ctx)
   if (payObj.result_code === 'SUCCESS') {
-     // var payResult = await payHandle.refoundAction(payObj)
+     let req_info = ctx.request.payBody.xml.req_info
+     let aesDecryptInfo = crypto.aesDecryptInfo(req_info)
+     var payResult = await payHandle.refoundAction(payObj)
      if (!payResult.err) {
        ctx.response.type = 'application/xml'
        ctx.response.body = `<xml>
