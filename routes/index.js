@@ -199,7 +199,7 @@ exports.payAction = async (ctx) => {
 exports.refoundAction = async (ctx) => {
    console.log(ctx.request.payBody.xml)
    console.log('ctx.request.payBody.xml')
-   // if (ctx.request.payBody.xml.result_code[0] === 'SUCCESS') {
+   if (ctx.request.payBody.xml.return_code[0] === 'SUCCESS') {
      let req_info = ctx.request.payBody.xml.req_info[0]
      console.log(req_info)
      console.log('req_info=======')
@@ -216,7 +216,7 @@ exports.refoundAction = async (ctx) => {
       } else {
        console.log('内部订单错误：'+ err )
       }
-   // } 
+   } 
 }
 
 function parsePayData(ctx) {
