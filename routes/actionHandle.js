@@ -40,7 +40,8 @@ var actions = {
       getArticleInfo: articleHandle.getArticleInfo
      },
      line: {
-      getLineManage: lineHandle.getLineManage
+      getLineManage: lineHandle.getLineManage,
+      getOrderList: lineHandle.getOrderList
      }
    }
 }

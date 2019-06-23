@@ -120,8 +120,6 @@ exports.refund = function(obj) {
                 passphrase: config.pay.mch_id // 商家id
             }
           },function(err, response, body){
-              console.log(bodyData)
-              console.log('body')
              parseString(body,function(err,body){
                if(!err){
                  resolve(body)
