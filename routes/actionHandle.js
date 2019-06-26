@@ -41,7 +41,11 @@ var actions = {
      },
      line: {
       getLineManage: lineHandle.getLineManage,
-      getOrderList: lineHandle.getOrderList
+      getOrderList: lineHandle.getOrderList,
+      addOrupdateRider: lineHandle.addOrupdateRider,
+      getRiderList: lineHandle.getRiderList,
+      removeRider: lineHandle.removeRider,
+      setDefaultRider: lineHandle.setDefaultRider
      }
    }
 }

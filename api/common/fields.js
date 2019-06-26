@@ -26,3 +26,6 @@ exports.ARTICLE = 'article'
 
 //线路信息
 exports.LINE = 'line'
+
+// 乘车人信息
+exports.RIDER = 'rider'
