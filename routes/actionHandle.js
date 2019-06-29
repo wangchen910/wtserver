@@ -45,7 +45,8 @@ var actions = {
       addOrupdateRider: lineHandle.addOrupdateRider,
       getRiderList: lineHandle.getRiderList,
       removeRider: lineHandle.removeRider,
-      setDefaultRider: lineHandle.setDefaultRider
+      setDefaultRider: lineHandle.setDefaultRider,
+      delOrder: lineHandle.delOrder
      }
    }
 }

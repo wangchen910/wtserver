@@ -8,6 +8,7 @@ const config = require(__baseDir+'/serverConfig')
 const querystring = require('querystring');
 const rediscli = require(path.join(__baseDir+'/until/redis')).connect
 const md5cipher = require(path.join(__baseDir + '/until/crypto')).cipher
+const lineHandle = require(__baseDir+'/api/app/line/lineHandle')
 exports.pay = async function(action, session, callback){
     if (!action.ip || !action.fee || !action.body || !action.address || !action.commodityId){
     	return callback({success: true, message:'缺少参数'})
@@ -69,10 +70,14 @@ exports.pay = async function(action, session, callback){
 // }
 
 exports.bookingPay = async function(action, session, callback){
-  if (!action.ip || !action.fee || !action.body){
+  if (!action.ip || !action.fee || !action.body || !action.type){
     return callback({success: true, message:'缺少参数'})
   }else{
-    action.openId = session.openId
+      action.openId = session.openId
+      let handleOrder = await exports.handleOrder(action)
+      if (!handleOrder.success) {
+        return callback({success: false, message: '下单错误', data: {notEnough: true}})
+      }
       let payObj = await pay.pay(action)
       if (!payObj.err) {
          //下单程序
@@ -83,6 +88,9 @@ exports.bookingPay = async function(action, session, callback){
          orderObj.out_trade_no = payObj.out_trade_no
          orderObj.userId = action.openId
          orderObj.type = action.type
+         orderObj.phone = action.phone
+         orderObj.name = action.name
+         orderObj.riderList = action.riderList
          let order = await exports.produceOrder(orderObj)
          if (!order.err) {
            callback({success:true,data:payObj})
@@ -106,7 +114,9 @@ exports.refund = async function (action, session, callback) {
   let refundBackObj = await pay.refund(refundObj)
   callback({success: true, data: refundBackObj})
 }
-
+/*
+*产生订单
+*/
 exports.produceOrder = async function(obj) {
    return new Promise((resolve, reject) => {
      var query = {}
@@ -120,6 +130,17 @@ exports.produceOrder = async function(obj) {
        }
      })
    }) 
+}
+// 处理订单业务 根据type 处理订单业务
+exports.handleOrder = async function(action) {
+  return new Promise((resolve, reject) => {
+    if (action.type === 'ticket') {
+      let result = lineHandle.handleOrder(action)
+      resolve(result)
+    } else {
+      resolve(true)
+    }
+  }) 
 }
 /*
 * 删除图片
@@ -275,6 +296,7 @@ exports.collectFormId = function(formId){
   query.formId = formId;
   mongo.db(fields.DEFAULT_DB).collection(fields.FORMID).insert(query)
 }
+
 
 
 
