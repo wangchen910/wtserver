@@ -20,14 +20,34 @@ exports.getOrderList = async function(action, session, callback) {
  delete action.ip;
  query.userId = session.openId
  // userId
-  mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).find(query).sort({time_end: -1}).toArray(function(err,data){
-      if (!err) {
-        callback({success:true, data: data})
-      } else {
-        console.log('appError: getLineManage:'+ err)
-        callback({success: false, err: err})
-      }
-  })
+  // mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).find(query).sort({time_end: -1}).toArray(function(err,data){
+  //     if (!err) {
+  //       callback({success:true, data: data})
+  //     } else {
+  //       console.log('appError: getLineManage:'+ err)
+  //       callback({success: false, err: err})
+  //     }
+  // })
+  mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).aggregate([{
+    $lookup:{
+      from: fields.LINE,
+      localField: 'lineId',
+      foreignField: 'id',
+      as: 'line_info'
+   }},{
+    $match: query
+   },{
+    $sort: {
+      time_end: -1
+    }
+   }]).toArray(function(err,data){
+     if (!err) {
+       callback({success: true, data:data})
+     } else {
+       console.log('appError: getLineManage:'+ err)
+       callback({success: false, err: err})
+     }
+   })
 }
 
 exports.getRiderList = async function(action, session, callback) {
