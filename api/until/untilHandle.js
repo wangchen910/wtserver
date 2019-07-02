@@ -91,6 +91,7 @@ exports.bookingPay = async function(action, session, callback){
          orderObj.phone = action.phone
          orderObj.name = action.name
          orderObj.riderList = action.riderList
+         orderObj.formId = action.formId
          let order = await exports.produceOrder(orderObj)
          if (!order.err) {
            callback({success:true,data:payObj})
@@ -297,6 +298,49 @@ exports.collectFormId = function(formId){
   mongo.db(fields.DEFAULT_DB).collection(fields.FORMID).insert(query)
 }
 
+
+exports.sendMessage = async function (formId, openId) {
+  var type = obj.type;
+  var access_token = await exports.getAccessToken();
+  var qrUrl = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token=ACCESS_TOKEN'+access_token
+  var page = 'pages/home/index'
+  return new Promise((resolve, reject)=>{
+      node_request({
+        url: qrUrl,
+        method: "POST",
+        encoding: null,
+        json: true,
+        headers: {
+          "content-type": "application/json"
+        },
+        body: {
+          "touser": openId,
+          "weapp_template_msg":{
+              "template_id":"C_f-0HBf_VqmFTSQwpS5r_NCKKZ5-tEo6rQLagb1svI",
+              "page":"pages/OrderList/index",
+              "form_id": formId,
+              "data":{
+                  "keyword1":{
+                      "value":"339208499"
+                  },
+                  "keyword2":{
+                      "value":"2015年01月05日 12:30"
+                  },
+                  "keyword3":{
+                      "value":"腾讯微信总部"
+                  },
+                  "keyword4":{
+                      "value":"广州市海珠区新港中路397号"
+                  }
+              },
+              "emphasis_keyword":"keyword1.DATA"
+          }
+      }
+      }, function(error, response, body) {
+        
+      })
+    })
+}
 
 
 

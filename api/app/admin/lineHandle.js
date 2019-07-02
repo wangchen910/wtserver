@@ -9,6 +9,8 @@ exports.addLineManage = async function(action, session, callback){
     query.price = action.price;
     query.departureTime = action.departureTime;
     query.departurePlace = action.departurePlace;
+    query.contacts_name = action.contacts_name;
+    query.contacts_phone = action.contacts_phone;
     if (action.id) {
         mongo.db(fields.DEFAULT_DB).collection(fields.LINE).update({id: action.id}, {$set: query},function(err){
           if (!err) {
