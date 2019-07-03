@@ -109,7 +109,7 @@ exports.bookingPay = async function(action, session, callback){
 exports.refund = async function (action, session, callback) {
   console.log(action)
   let refundObj = {
-    fee: 0.1,
+    fee: 1,
     out_trade_no: action.out_trade_no
   }
   let refundBackObj = await pay.refund(refundObj)
@@ -183,6 +183,8 @@ exports.getAccessToken = async function(){
             if (!error && response.statusCode == 200) {
               var bodyData = JSON.parse(body);
               if (bodyData.expires_in === 7200){
+                console.log(bodyData)
+                console.log('bodyData')
                 rediscli.getClient().set(access_token(), bodyData.access_token, function(err,res){
                   if(!err){
                     rediscli.getClient().expire(access_token(), 60*60);
@@ -300,9 +302,8 @@ exports.collectFormId = function(formId){
 
 
 exports.sendMessage = async function (formId, openId) {
-  var type = obj.type;
   var access_token = await exports.getAccessToken();
-  var qrUrl = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token=ACCESS_TOKEN'+access_token
+  var qrUrl = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send?access_token='+access_token
   var page = 'pages/home/index'
   return new Promise((resolve, reject)=>{
       node_request({
@@ -337,10 +338,14 @@ exports.sendMessage = async function (formId, openId) {
           }
       }
       }, function(error, response, body) {
-        
+        console.log(body)
       })
     })
 }
+// 3060f53c900649ec966f78fa2867224f
+// 6ddbf77ec5524561a6a5c0b6a0366187
+// 6387f8d6d72441fc9354dc5f67a0d4bc
 
-
-
+// setTimeout(function(){
+//   exports.sendMessage('6387f8d6d72441fc9354dc5f67a0d4bc', 'olsQQ5Q_GZVREHsZnNoXCHCbFHug')
+// }, 5000)
