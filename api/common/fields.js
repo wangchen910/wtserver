@@ -29,3 +29,6 @@ exports.LINE = 'line'
 
 // 乘车人信息
 exports.RIDER = 'rider'
+
+// 城市
+exports.CITY = 'city'

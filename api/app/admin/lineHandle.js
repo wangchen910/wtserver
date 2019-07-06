@@ -1,6 +1,7 @@
 const mongo = require(__baseDir+'/until/mongo')
 const fields = require(__baseDir+'/api/common/fields')
 const uuidv4 = require('uuid/v1')
+const notify = require(__baseDir+'/until/notify')
 exports.addLineManage = async function(action, session, callback){
     let query = {}
     query.start = action.start;
@@ -11,6 +12,7 @@ exports.addLineManage = async function(action, session, callback){
     query.departurePlace = action.departurePlace;
     query.contacts_name = action.contacts_name;
     query.contacts_phone = action.contacts_phone;
+    query.licensePlate = action.licensePlate
     if (action.id) {
         mongo.db(fields.DEFAULT_DB).collection(fields.LINE).update({id: action.id}, {$set: query},function(err){
           if (!err) {
@@ -63,4 +65,40 @@ exports.removeLine = async function(action, session, callback){
       callback({success: false, err: err})
      }
    })
+}
+
+exports.smsNotice = async function(action, session, callback){
+  let query = {};
+   query.lineId = action.id;
+   mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).find(query).toArray(function(err, data){
+     if (!err) {
+        let orderList = data;
+        let queryInfo = {}
+        queryInfo.id = action.id
+        mongo.db(fields.DEFAULT_DB).collection(fields.LINE).findOne(queryInfo, function(err, info){
+          if (!err) {
+             let lineInfo = info;
+             notify.smsNotify(info, orderList)
+             callback({success: true})
+          } else {
+           console.log('smsNotice: smsNotice:'+ err)
+           callback({success: false, err: err})
+          }
+        })
+     } else {
+      console.log('smsNotice: smsNotice:'+ err)
+      callback({success: false, err: err})
+     }
+   })
+}
+
+exports.updateOrAddCity = async function(action, session, callback){
+	 let data = action.data
+   mongo.db(fields.DEFAULT_DB).collection(fields.CITY).update({type: 'city'},{$set:{city: data}},{upsert:true},function(err){
+    if (!err){
+    	callback({success:true,message:'add city success'})
+    }else {
+    	callback({success:false,message:err})
+    }
+  })
 }

@@ -32,7 +32,9 @@ var actions = {
    line: {
     addLineManage: lineHandle.addLineManage,
     getLineManageList: lineHandle.getLineManageList,
-    removeLine: lineHandle.removeLine
+    removeLine: lineHandle.removeLine,
+    smsNotice: lineHandle.smsNotice,
+    updateOrAddCity: lineHandle.updateOrAddCity
    }
 }
 

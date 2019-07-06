@@ -206,3 +206,15 @@ exports.delOrder = async function(action, session, callback) {
       }
   })
 }
+
+
+exports.getCity = async function(action, session, callback) {
+  mongo.db(fields.DEFAULT_DB).collection(fields.CITY).findOne({type: 'city'}, async function(err, obj){
+      if (!err) {
+          callback({success: true, data: obj.city})
+      } else {
+        console.log('appError: getCity:'+ err)
+        callback({success: false, err: err})
+      }
+  })
+}

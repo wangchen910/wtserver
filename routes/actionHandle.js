@@ -46,7 +46,8 @@ var actions = {
       getRiderList: lineHandle.getRiderList,
       removeRider: lineHandle.removeRider,
       setDefaultRider: lineHandle.setDefaultRider,
-      delOrder: lineHandle.delOrder
+      delOrder: lineHandle.delOrder,
+      getCity: lineHandle.getCity
      }
    }
 }
