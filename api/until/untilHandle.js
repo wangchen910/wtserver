@@ -108,11 +108,15 @@ exports.bookingPay = async function(action, session, callback){
 
 exports.refund = async function (action, session, callback) {
   console.log(action)
+  let orderInfo = action.orderInfo
   let refundObj = {
-    fee: 1,
-    out_trade_no: action.out_trade_no
+    fee: orderInfo.fee,
+    out_trade_no: orderInfo.out_trade_no
   }
   let refundBackObj = await pay.refund(refundObj)
+  if (refundBackObj.xml && refundBackObj.xml.return_code && refundBackObj.xml.return_code[0] === 'SUCCESS') {
+    lineHandle.refoundUpdateOrder(orderInfo)
+  }
   callback({success: true, data: refundBackObj})
 }
 /*

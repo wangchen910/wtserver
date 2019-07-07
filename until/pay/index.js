@@ -83,7 +83,7 @@ exports.refund = function(obj) {
         try{
           var total_fee = (obj.fee*100).toString(); // 订单价格 单位是 分
           var settlement_refund_fee = (obj.fee*100).toString()
-          var refound_fee = ((obj.fee*100)/2).toString()
+          var refound_fee = (obj.fee*100).toString()
           var nonce_str = stringRandom(16, {numbers: false}) // 随机字符串
           var notify_url = config.pay.refound_notify_url
           // var out_trade_no = getWxPayOrdrID(); // 商户订单号

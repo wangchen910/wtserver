@@ -218,3 +218,24 @@ exports.getCity = async function(action, session, callback) {
       }
   })
 }
+
+
+
+exports.refoundUpdateOrder = async function(action) {
+  var query = {}
+  delete action.ip;
+  query.out_trade_no = action.out_trade_no
+  mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).findOne(query, async function(err, obj){
+      if (!err) {
+        let num = obj.riderList.length || 1
+        let lineId = obj.lineId
+        if (!obj.refound) {
+          exports.updateLineNum(lineId, 'add', num)
+        } else {
+          return
+        }
+      } else {
+        console.log('refoundUpdateOrder: err', err) 
+      }
+  })
+}

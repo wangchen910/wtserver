@@ -68,7 +68,7 @@ exports.removeLine = async function(action, session, callback){
 }
 
 exports.smsNotice = async function(action, session, callback){
-  let query = {};
+  let query = {refound: {$exists: false}};
    query.lineId = action.id;
    mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).find(query).toArray(function(err, data){
      if (!err) {
