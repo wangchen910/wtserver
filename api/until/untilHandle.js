@@ -107,11 +107,19 @@ exports.bookingPay = async function(action, session, callback){
 }
 
 exports.refund = async function (action, session, callback) {
-  console.log(action)
   let orderInfo = action.orderInfo
+  let lineInfo = orderInfo.line_info[0]
+  console.log(orderInfo)
+  let gl = CalculateThePrice(lineInfo.departureTime)
+  if (!gl) {
+    callback({success: true, data: {Obsolete: true}})
+    return   
+  }
+  console.log(gl, 'gl============')
   let refundObj = {
     fee: orderInfo.fee,
-    out_trade_no: orderInfo.out_trade_no
+    out_trade_no: orderInfo.out_trade_no,
+    proportion: gl
   }
   let refundBackObj = await pay.refund(refundObj)
   if (refundBackObj.xml && refundBackObj.xml.return_code && refundBackObj.xml.return_code[0] === 'SUCCESS') {
@@ -353,3 +361,24 @@ exports.sendMessage = async function (formId, openId) {
 // setTimeout(function(){
 //   exports.sendMessage('6387f8d6d72441fc9354dc5f67a0d4bc', 'olsQQ5Q_GZVREHsZnNoXCHCbFHug')
 // }, 5000)
+
+function CalculateThePrice(time) {
+  let departureTime = time.split(' ')[0]
+  let date = departureTime ? new Date(departureTime) :new Date()
+  let date1 = new Date();
+  let timp = (date - date1)/1000/60/60/24
+  let gl = 0
+  console.log(timp, 'time=========')
+  if (timp < 0) {
+    gl = 0
+  } else if (0 <= timp && timp < 1) {
+    gl = 0.5
+    console.log('5555555555')
+  } else if ( 1 <= timp && timp<= 2) {
+    gl = 0.7
+    console.log('77777777777777')
+  } else if (2 < timp) {
+    gl = 0.85
+  }
+  return gl
+}
