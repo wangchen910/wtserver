@@ -375,7 +375,7 @@ function CalculateThePrice(time) {
   } else if ( 1 <= timp && timp<= 2) {
     gl = 0.7
   } else if (2 < timp) {
-    gl = 0.85
+    gl = 0.8
   }
   return gl
 }
