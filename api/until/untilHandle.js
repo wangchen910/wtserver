@@ -368,15 +368,12 @@ function CalculateThePrice(time) {
   let date1 = new Date();
   let timp = (date - date1)/1000/60/60/24
   let gl = 0
-  console.log(timp, 'time=========')
   if (timp < 0) {
     gl = 0
   } else if (0 <= timp && timp < 1) {
     gl = 0.5
-    console.log('5555555555')
   } else if ( 1 <= timp && timp<= 2) {
     gl = 0.7
-    console.log('77777777777777')
   } else if (2 < timp) {
     gl = 0.85
   }
