@@ -40,6 +40,8 @@ exports.getOrderList = async function(action, session, callback) {
     $sort: {
       time_end: -1
     }
+   },{
+    $limit: 5
    }]).toArray(function(err,data){
      if (!err) {
        callback({success: true, data:data})
