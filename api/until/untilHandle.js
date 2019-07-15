@@ -122,7 +122,7 @@ exports.refund = async function (action, session, callback) {
     proportion: gl
   }
   let refundBackObj = await pay.refund(refundObj)
-  if (refundBackObj.xml && refundBackObj.xml.return_code && refundBackObj.xml.return_code[0] === 'SUCCESS') {
+  if (refundBackObj.xml && refundBackObj.xml.result_code && refundBackObj.xml.result_code[0] === 'SUCCESS') {
     lineHandle.refoundUpdateOrder(orderInfo)
   }
   callback({success: true, data: refundBackObj})
