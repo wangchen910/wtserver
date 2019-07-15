@@ -34,7 +34,7 @@ exports.refoundAction = function(payObj) {
     parseString(payObj, function(err, body){
       var query = {}
       let refoundRoot = body.root
-      query.out_trade_no = refoundRoot.out_refund_no[0];
+      query.out_trade_no = refoundRoot.out_trade_no[0];
       console.log(query)
       console.log('query================')
       mongo.db(fields.DEFAULT_DB).collection(fields.ORDER).findOne(query,function(err, data){
